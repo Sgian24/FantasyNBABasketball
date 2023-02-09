@@ -37,8 +37,12 @@ const App = () => {
         .includes(i.first_name + i.last_name))
        activePlayersFiltered.map(i => playerIDs.push(i.id))
        const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022&player_ids[]=${playerIDs}`, {signal: abortController.signal})
-       activePlayersFiltered.forEach(i => i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)) 
+      
+      // Gary Trent Jr (id: 448) has a different id (3089) under the season averages endpoint, hence the ternary operator  
+
+       activePlayersFiltered.forEach(i => i.id === 448? i.avg = seasonResponse.data.data[236]: i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)[0]) 
        setActivePlayers(activePlayersFiltered)
+       console.log(seasonResponse.data.data)
      } catch (error) {
        if (error.response) {
          console.log(error.response.data);
@@ -55,10 +59,14 @@ const App = () => {
    return () => abortController.abort();
   },[])
  
+
 console.log(activePlayers);
 
  return (
     <div className="App">
+     {
+      activePlayers.map(i => <p>{i.first_name} {i.last_name} {i.avg !== undefined? i.avg.pts: "N/A"}</p>)
+} 
     </div>
   );
 }

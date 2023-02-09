@@ -2,7 +2,8 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 
 const App = () => {
-  const [activePlayers, setActivePlayers] = useState("");
+  const [activePlayers, setActivePlayers] = useState([]);
+  const [seasonAverages, setSeasonAverages] = useState([]);
 
   const options = {
     method: 'GET',
@@ -21,6 +22,7 @@ const App = () => {
     );
     const pages = arrayRange(1,39,1)
     const totalPlayers = [];
+    const playerIDs = [];
     const getData = async () => {
      try { 
        const response = await Promise.all(
@@ -29,8 +31,14 @@ const App = () => {
           }))
        const activeResponse = await axios.get('https://nba-player-individual-stats.p.rapidapi.com/players', options)
        response.map(i => i.data.data.map(t => totalPlayers.push(t)))
-       const playersOnTeam = activeResponse.data.filter(i => i.team !== null).map(i => i.firstName + i.lastName)
-       setActivePlayers(totalPlayers.filter(i => playersOnTeam.includes(i.first_name + i.last_name)));
+       const activePlayersFiltered = totalPlayers.filter(i => activeResponse.data
+        .filter(i => i.team !== null)
+        .map(i => i.firstName + i.lastName)
+        .includes(i.first_name + i.last_name))
+       activePlayersFiltered.map(i => playerIDs.push(i.id))
+       const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022&player_ids[]=${playerIDs}`, {signal: abortController.signal})
+       activePlayersFiltered.forEach(i => i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)) 
+       setActivePlayers(activePlayersFiltered)
      } catch (error) {
        if (error.response) {
          console.log(error.response.data);
@@ -46,11 +54,11 @@ const App = () => {
    getData();
    return () => abortController.abort();
   },[])
+ 
 console.log(activePlayers);
 
  return (
     <div className="App">
-     
     </div>
   );
 }

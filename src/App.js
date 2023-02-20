@@ -1,10 +1,11 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import TableComponent from './Components/Table'
 
 const App = () => {
   const [activePlayers, setActivePlayers] = useState([]);
-  const [seasonAverages, setSeasonAverages] = useState([]);
-
+  
   const options = {
     method: 'GET',
 	  headers: {
@@ -34,14 +35,14 @@ const App = () => {
        const activePlayersFiltered = totalPlayers.filter(i => activeResponse.data
         .filter(i => i.team !== null)
         .map(i => i.firstName + i.lastName)
-        .includes(i.first_name + i.last_name))
+        .includes(i.first_name + i.last_name) && i.id !== 448)
+
+        // Gary Trent Jr is included a second time with a different id(448) hence the filter 
+
        activePlayersFiltered.map(i => playerIDs.push(i.id))
        const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022&player_ids[]=${playerIDs}`, {signal: abortController.signal})
-      
-      // Gary Trent Jr (id: 448) has a different id (3089) under the season averages endpoint, hence the ternary operator  
-
-       activePlayersFiltered.forEach(i => i.id === 448? i.avg = seasonResponse.data.data[236]: i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)[0]) 
-       setActivePlayers(activePlayersFiltered)
+       activePlayersFiltered.forEach(i => i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)[0]) 
+       setActivePlayers(activePlayersFiltered.filter(i => i.avg !== undefined))
        console.log(seasonResponse.data.data)
      } catch (error) {
        if (error.response) {
@@ -59,14 +60,14 @@ const App = () => {
    return () => abortController.abort();
   },[])
  
-
 console.log(activePlayers);
 
  return (
+    
     <div className="App">
-     {
-      activePlayers.map(i => <p>{i.first_name} {i.last_name} {i.avg !== undefined? i.avg.pts: "N/A"}</p>)
-} 
+      <div >
+      <TableComponent activePlayers={activePlayers}/>
+      </div>
     </div>
   );
 }

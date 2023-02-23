@@ -5,6 +5,7 @@ import TableComponent from './Components/Table'
 
 const App = () => {
   const [activePlayers, setActivePlayers] = useState([]);
+  const [sort, setSort] = useState("PPG");
   
   const options = {
     method: 'GET',
@@ -60,13 +61,10 @@ const App = () => {
    return () => abortController.abort();
   },[])
  
-console.log(activePlayers);
-
  return (
-    
     <div className="App">
       <div >
-      <TableComponent activePlayers={activePlayers}/>
+      <TableComponent  sort={sort} setSort={setSort} activePlayers={activePlayers}/>
       </div>
     </div>
   );

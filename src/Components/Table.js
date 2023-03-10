@@ -17,30 +17,73 @@ const TableComponent = ({activePlayers, sort, setSort}) => {
         },[])
 
     return (
-        <div>
+        <div  >
             <style type="text/css">
-                {`
-                 th {
-                    cursor: pointer;
-                 }
-                 #player {
-                    cursor: auto;
-                 }
+                {`  
+               thead tr{
+                width: 100%;
+                display: block;
+                cursor: pointer;
+               }
+           
+               tbody {
+                display:block;
+                height: 400px;
+                width: 100%;
+                overflow-y: scroll;
+               }
+
+              #player {
+                cursor: auto;
+              }
+              
+               tr {
+               font-size: 14px;
+              }
+
+              td:nth-child(1), th:nth-child(1) {
+                  min-width: 175px;
+              }
+              td:nth-child(2), th:nth-child(2) {
+                  min-width: 44px;
+              }
+
+              td:nth-child(3), th:nth-child(3) {
+                  min-width: 50px;
+              }
+
+              td:nth-child(n+4):nth-child(-n+8),
+              th:nth-child(n+4):nth-child(-n+8) {
+                min-width: 38px;
+              } 
+
+              td:nth-child(n+9):nth-child(-n+10),
+              th:nth-child(n+9):nth-child(-n+10) {
+                min-width: 53px;
+              } 
+
+              td:nth-child(11) {
+                min-width: 57px;
+              }
+              th:nth-child(11) {
+                min-width: 75px;
+              }
                `}
             </style>
-            <Table striped bordered hover size="sm">
+           
+            <Table size="sm" responsive striped bordered hover>
                 <thead>
                   <tr>
                     <th id="player">Player</th>
                     <th>GP</th>
-                    <th>MIN</th>
-                    <th>PPG</th>
-                    <th>RPG</th>      
-                    <th>APG</th>
-                    <th>BPG</th>
-                    <th>SPG</th>
-                    <th>FG%</th>
-                    <th>3P%</th>
+                    <th >MIN</th>
+                    <th >PPG</th>
+                    <th >RPG</th>      
+                    <th >APG</th>
+                    <th >BPG</th>
+                    <th >SPG</th>
+                    <th >FG%</th>
+                    <th >3P%</th>
                     <th>FT%</th>
                   </tr>
                 </thead>
@@ -70,9 +113,9 @@ const TableComponent = ({activePlayers, sort, setSort}) => {
                     }).map(i =><tr key={i.id}>
                     <td><img src="" alt="" />{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
-                    <td>{i.avg.min}</td>
-                    <td>{i.avg.pts.toFixed(1)}</td>
-                    <td>{i.avg.reb.toFixed(1)}</td>
+                    <td >{i.avg.min}</td>
+                    <td >{i.avg.pts.toFixed(1)}</td>
+                    <td >{i.avg.reb.toFixed(1)}</td>
                     <td>{i.avg.ast.toFixed(1)}</td>
                     <td>{i.avg.blk.toFixed(1)}</td>
                     <td>{i.avg.stl.toFixed(1)}</td>
@@ -82,6 +125,7 @@ const TableComponent = ({activePlayers, sort, setSort}) => {
                     </tr>)}
                 </tbody>
             </Table>
+            
         </div>
     )
 }

@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 
-const TableComponent = ({activePlayers, sort, setSort}) => {
+const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter}) => {
    
     useEffect(() => {
         const ths = document.querySelectorAll("th") 
+        const test = document.getElementById("Statistics-Table-Body")
         const handleClick = (element, e) => {
             setSort(element.innerHTML)
             ths.forEach(i => i.style.removeProperty("color"))
@@ -17,67 +18,67 @@ const TableComponent = ({activePlayers, sort, setSort}) => {
         },[])
 
     return (
-        <div  >
+        <div>
             <style type="text/css">
-                {`  
-               thead tr{
-                width: 100%;
-                display: block;
-                cursor: pointer;
-               }
-           
-               tbody {
-                display:block;
+              {`  
+              .Statistics-Table {
+                overflow: scroll;
+                position: relative;
                 height: 400px;
                 width: 100%;
-                overflow-y: scroll;
-               }
-
-              #player {
-                cursor: auto;
+                border: 1px solid black;
+                z-index: 1;
               }
               
-               tr {
+              Table {
+               border-collapse: separate;
+               border-spacing: 0;
+              }
+              
+               .Statistics-Table th {
+                border-bottom: solid 1px #dee2e6;
+                position: sticky;
+                background: white;
+                top: 0;
+                cursor: pointer;
+                z-index: 2;
+               }
+              
+              #player {
+                border-bottom: 1px solid #dee2e6;
+                position: sticky;
+                background: white;
+                left: 0;
+                cursor: auto;
+                z-index: 3;
+              }
+              
+              tr {
                font-size: 14px;
               }
 
-              td:nth-child(1), th:nth-child(1) {
-                  min-width: 175px;
-              }
-              td:nth-child(2), th:nth-child(2) {
-                  min-width: 44px;
-              }
+               tbody tr td:nth-child(1) {
+                min-width: 175px;
+                position: sticky;
+                left: 0;
+                background: white;
+                border-bottom: solid 1px #dee2e6;
+               }
 
-              td:nth-child(3), th:nth-child(3) {
-                  min-width: 50px;
-              }
-
-              td:nth-child(n+4):nth-child(-n+8),
-              th:nth-child(n+4):nth-child(-n+8) {
-                min-width: 38px;
-              } 
-
-              td:nth-child(n+9):nth-child(-n+10),
-              th:nth-child(n+9):nth-child(-n+10) {
-                min-width: 53px;
-              } 
-
-              td:nth-child(11) {
-                min-width: 57px;
-              }
-              th:nth-child(11) {
-                min-width: 75px;
-              }
-               `}
+               .Statistics-Table tbody tr td {
+                border-bottom: solid 1px #dee2e6;
+               }
+             `}    
             </style>
-           
-            <Table size="sm" responsive striped bordered hover>
+            <input style={{marginBottom:"5px"}}onChange={handleChange} type="text" />
+            <div className='Statistics-Table'>
+              <Table size="sm" bordered hover>
                 <thead>
                   <tr>
                     <th id="player">Player</th>
                     <th>GP</th>
                     <th >MIN</th>
-                    <th >PPG</th>
+                    <th style={{color: "red"}} >PPG</th>
                     <th >RPG</th>      
                     <th >APG</th>
                     <th >BPG</th>
@@ -87,8 +88,9 @@ const TableComponent = ({activePlayers, sort, setSort}) => {
                     <th>FT%</th>
                   </tr>
                 </thead>
-                <tbody>
-                   {activePlayers.sort((a, b) => { 
+                <tbody id="Statistics-Table-Body" >
+                   {activePlayers.filter(i => String(i.first_name + " " + i.last_name).toLowerCase().includes(playerFilter.toLowerCase()))
+                   .sort((a, b) => { 
                     if (sort === "PPG") {
                     return b.avg.pts - a.avg.pts
                    } else if (sort === "RPG") {
@@ -111,7 +113,7 @@ const TableComponent = ({activePlayers, sort, setSort}) => {
                     return parseInt(b.avg.min.split(':')[0] * 60 + b.avg.min.split(':')[1]) - parseInt(a.avg.min.split(':')[0] * 60 + a.avg.min.split(':')[1]) ;
                    }
                     }).map(i =><tr key={i.id}>
-                    <td><img src="" alt="" />{i.first_name} {i.last_name} </td>
+                    <td>{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
                     <td >{i.avg.min}</td>
                     <td >{i.avg.pts.toFixed(1)}</td>
@@ -124,8 +126,8 @@ const TableComponent = ({activePlayers, sort, setSort}) => {
                     <td>{parseFloat(i.avg.ft_pct * 100).toFixed(1)}%</td>
                     </tr>)}
                 </tbody>
-            </Table>
-            
+              </Table>
+            </div>
         </div>
     )
 }

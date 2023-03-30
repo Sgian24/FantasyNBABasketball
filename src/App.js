@@ -1,10 +1,7 @@
-import {useState, useEffect, useLayoutEffect} from 'react';
+import {useState, useEffect} from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import TableComponent from './Components/Table'
+import Home from './Pages/Home';
 
 const App = () => {
   const [activePlayers, setActivePlayers] = useState([]);
@@ -26,7 +23,7 @@ const App = () => {
         { length: (stop - start) / step + 1 },
         (value, index) => start + index * step
     );
-    const pages = arrayRange(1,47,1)
+    const pages = arrayRange(1,52,1)
     const totalPlayers = [];
     const playerIDs = [];
     const getData = async () => {
@@ -47,7 +44,6 @@ const App = () => {
        activePlayersFiltered.map(i => playerIDs.push(i.id))
        
        const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022&player_ids[]=${playerIDs}`, {signal: abortController.signal})
-       console.log(seasonResponse);
        activePlayersFiltered.forEach(i => i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)[0]) 
        setActivePlayers(activePlayersFiltered.filter(i => i.avg !== undefined))
        
@@ -70,18 +66,13 @@ const App = () => {
   const handleChange = (event) => {
     setPlayerFilter(event.target.value)
   }
+
+  console.log(activePlayers)
  
- return (
-    <div className="App">
-      <Container >
-        <Row>
-          <Col>NBA Player Tracker</Col>
-        </Row>
-        <Row>
-        <Col md={7} ><TableComponent sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter}handleChange={handleChange}/></Col>
-      </Row>
-      </Container>
-    </div>
+  return (
+    <>
+    <Home sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter}handleChange={handleChange} />
+    </>
   );
 }
 

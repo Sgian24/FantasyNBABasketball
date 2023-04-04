@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Route, Routes } from 'react-router-dom';
 import Home from './Pages/Home';
 
 const App = () => {
@@ -71,7 +72,11 @@ const App = () => {
  
   return (
     <>
-    <Home sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter}handleChange={handleChange} />
+    <Routes>
+      <Route path="/" element={<Home sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter}handleChange={handleChange}/>}/>
+      <Route />
+      <Route />
+    </Routes>
     </>
   );
 }

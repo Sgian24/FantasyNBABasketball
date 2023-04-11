@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {auth} from "../firebase";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useUserAuth } from "../UserAuthContext";
+import { firestore } from "../firebase";
+import { setDoc, doc } from "firebase/firestore";
 
 const Signup = () => {
 
@@ -11,7 +12,7 @@ const Signup = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
    
-    const { signUp } = useUserAuth();
+    const { signUp, logOut } = useUserAuth();
     
     const navigate = useNavigate();
     
@@ -19,12 +20,20 @@ const Signup = () => {
         e.preventDefault();
         setError("");
         try {
-            await signUp(email, password);
-            navigate("/");
+          const userCredentials = await signUp(email, password);
+          const user = userCredentials.user
+          navigate("/");
+          await setDoc(doc(firestore, "users", user.uid), {
+            userID: user.uid,
+            userEmail: user.email,
+            roster: [""]
+          });
+          await logOut()
         } catch (err) {
-            setError(err.message);
+          setError(err.message);
         }
     }
+    
     return (
         <>
         <Form>

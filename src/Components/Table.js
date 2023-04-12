@@ -1,11 +1,15 @@
 import { useEffect } from 'react';
+import { useUserAuth } from '../UserAuthContext';
+import { doc, updateDoc } from 'firebase/firestore';
+import { firestore } from '../firebase';
 import Table from 'react-bootstrap/Table';
 
-const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter}) => {
-   
+const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster}) => {
+
+    const {user} = useUserAuth();
+    
     useEffect(() => {
         const ths = document.querySelectorAll("th") 
-        const test = document.getElementById("Statistics-Table-Body")
         const handleClick = (element, e) => {
             setSort(element.innerHTML)
             ths.forEach(i => i.style.removeProperty("color"))
@@ -17,6 +21,16 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
           }})
         },[])
 
+      const onClick = async (playerId) => {
+        const updatedRoster = roster.concat(activePlayers.filter(i => i.id === playerId))
+        setRoster(updatedRoster)
+        const rosterRef = doc(firestore, "users", user.uid)
+        await updateDoc(rosterRef, {
+          roster: roster
+        })
+        console.log(roster);
+      }
+     
     return (
         <div>
             <style type="text/css">
@@ -77,14 +91,14 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                   <tr>
                     <th id="player">Player</th>
                     <th>GP</th>
-                    <th >MIN</th>
+                    <th>MIN</th>
                     <th style={{color: "red"}} >PPG</th>
-                    <th >RPG</th>      
-                    <th >APG</th>
-                    <th >BPG</th>
-                    <th >SPG</th>
-                    <th >FG%</th>
-                    <th >3P%</th>
+                    <th>RPG</th>      
+                    <th>APG</th>
+                    <th>BPG</th>
+                    <th>SPG</th>
+                    <th>FG%</th>
+                    <th>3P%</th>
                     <th>FT%</th>
                   </tr>
                 </thead>
@@ -113,7 +127,7 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                     return parseInt(b.avg.min.split(':')[0] * 60 + b.avg.min.split(':')[1]) - parseInt(a.avg.min.split(':')[0] * 60 + a.avg.min.split(':')[1]) ;
                    }
                     }).map(i =><tr key={i.id}>
-                    <td>{i.first_name} {i.last_name} </td>
+                    <td><button onClick={() => onClick(i.id)}>Draft</button>{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
                     <td >{i.avg.min}</td>
                     <td >{i.avg.pts.toFixed(1)}</td>

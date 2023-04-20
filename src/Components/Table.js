@@ -21,16 +21,45 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
           }})
         },[])
 
-      const onClick = async (playerId) => {
-        const updatedRoster = roster.concat(activePlayers.filter(i => i.id === playerId))
-        setRoster(updatedRoster)
-        const rosterRef = doc(firestore, "users", user.uid)
-        await updateDoc(rosterRef, {
-          roster: roster
-        })
-        console.log(roster);
+    const onClick = async (playerId) => {
+      if (roster.map(i => i.id).includes(playerId)) {
+        window.alert("included");
+      } else {
+      const updatedRoster = roster.concat(activePlayers.filter(i => i.id === playerId))
+      const rosterRef = doc(firestore, "users", user.uid)
+      await updateDoc(rosterRef, {
+        roster: updatedRoster
+      })
+      console.log(roster);
+      setRoster(updatedRoster)
+    }}
+       
+    const playerSort = activePlayers.filter(i => String(i.first_name + " " + i.last_name).toLowerCase()
+      .includes(playerFilter.toLowerCase()))
+      .sort((a, b) => { 
+       if (sort === "PPG") {
+          return b.avg.pts - a.avg.pts
+       } else if (sort === "RPG") {
+          return b.avg.reb - a.avg.reb
+       } else if (sort === "APG") {
+          return b.avg.ast - a.avg.ast
+       } else if (sort === "BPG") {
+          return b.avg.blk - a.avg.blk
+       } else if (sort === "SPG") {
+          return b.avg.stl - a.avg.stl
+       } else if (sort === "FG%") {
+          return parseFloat(b.avg.fg_pct * 100).toFixed(1) - parseFloat(a.avg.fg_pct * 100).toFixed(1)
+       } else if (sort === "3P%") {
+          return parseFloat(b.avg.fg3_pct * 100).toFixed(1) - parseFloat(a.avg.fg3_pct * 100).toFixed(1)
+       } else if (sort === "FT%") {
+          return parseFloat(b.avg.ft_pct * 100).toFixed(1) - parseFloat(a.avg.ft_pct * 100).toFixed(1)
+       } else if (sort === "GP") {
+          return b.avg.games_played - a.avg.games_played
+       } else {
+          return parseInt(b.avg.min.split(':')[0] * 60 + b.avg.min.split(':')[1]) - parseInt(a.avg.min.split(':')[0] * 60 + a.avg.min.split(':')[1]) ;
       }
-     
+    })
+    
     return (
         <div>
             <style type="text/css">
@@ -103,30 +132,7 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                   </tr>
                 </thead>
                 <tbody id="Statistics-Table-Body" >
-                   {activePlayers.filter(i => String(i.first_name + " " + i.last_name).toLowerCase().includes(playerFilter.toLowerCase()))
-                   .sort((a, b) => { 
-                    if (sort === "PPG") {
-                    return b.avg.pts - a.avg.pts
-                   } else if (sort === "RPG") {
-                    return b.avg.reb - a.avg.reb
-                   } else if (sort === "APG") {
-                    return b.avg.ast - a.avg.ast
-                   } else if (sort === "BPG") {
-                    return b.avg.blk - a.avg.blk
-                   }  else if (sort === "SPG") {
-                    return b.avg.stl - a.avg.stl
-                   }  else if (sort === "FG%") {
-                    return parseFloat(b.avg.fg_pct * 100).toFixed(1) - parseFloat(a.avg.fg_pct * 100).toFixed(1)
-                   } else if (sort === "3P%") {
-                    return parseFloat(b.avg.fg3_pct * 100).toFixed(1) - parseFloat(a.avg.fg3_pct * 100).toFixed(1)
-                   } else if (sort === "FT%") {
-                    return parseFloat(b.avg.ft_pct * 100).toFixed(1) - parseFloat(a.avg.ft_pct * 100).toFixed(1)
-                   } else if (sort === "GP") {
-                    return b.avg.games_played - a.avg.games_played
-                   } else {
-                    return parseInt(b.avg.min.split(':')[0] * 60 + b.avg.min.split(':')[1]) - parseInt(a.avg.min.split(':')[0] * 60 + a.avg.min.split(':')[1]) ;
-                   }
-                    }).map(i =><tr key={i.id}>
+                   {playerSort.map(i =><tr key={i.id}>
                     <td><button onClick={() => onClick(i.id)}>Draft</button>{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
                     <td >{i.avg.min}</td>

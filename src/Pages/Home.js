@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from "react-bootstrap/Button";
 import TableComponent from '../Components/Table';
+import RosterDashboard from '../Components/RosterDashBoard';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
@@ -116,10 +117,10 @@ const Home = () => {
             <Col>NBA Player Tracker</Col>
           </Row>
           <Row>
-            <Col><div style={{border:"1px solid black", marginTop:"35px"}}>{roster.map(i => 
-              <p >{i.first_name}{i.last_name}</p>)}</div>
+            <Col md="6">
+              <RosterDashboard roster={roster} />
             </Col>
-            <Col><TableComponent setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/></Col>
+            <Col md="6"><TableComponent setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/></Col>
           </Row>
           <Row>
             <Col>

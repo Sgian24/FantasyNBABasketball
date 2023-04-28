@@ -39,7 +39,7 @@ const Home = () => {
         { length: (stop - start) / step + 1 },
         (value, index) => start + index * step
     );
-    const pages = arrayRange(1,52,1)
+    const pages = arrayRange(4,52,1)
     const totalPlayers = [];
     const playerIDs = [];
     const getData = async () => {
@@ -48,6 +48,7 @@ const Home = () => {
          pages.map( async i => {
            return await axios.get(`https://www.balldontlie.io/api/v1/players?page=${i}&per_page=100`, {signal: abortController.signal})
           }))
+          
        const activeResponse = await axios.get('https://nba-player-individual-stats.p.rapidapi.com/players', options)
        response.map(i => i.data.data.map(t => totalPlayers.push(t)))
        const activePlayersFiltered = totalPlayers.filter(i => activeResponse.data
@@ -56,8 +57,14 @@ const Home = () => {
         .includes(i.first_name + i.last_name) && i.id !== 448)
         // Gary Trent Jr is included a second time with a different id(448) hence the filter 
        activePlayersFiltered.map(i => playerIDs.push(i.id))
-       const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022&player_ids[]=${playerIDs}`, {signal: abortController.signal})
-       activePlayersFiltered.forEach(i => i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)[0]) 
+       const slicedArray_1 = playerIDs.slice(0, 460)
+       const slicedArray_2 = playerIDs.slice(461, 508)
+       const playerIDs_1 = slicedArray_1.map(i => `&player_ids[]=${i}`).join("") 
+       const playerIDs_2 = slicedArray_2.map(i => `&player_ids[]=${i}`).join("") 
+       const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022${playerIDs_1}`, {signal: abortController.signal})
+       const seasonResponse_2 = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022${playerIDs_2}`, {signal: abortController.signal})
+       const seasonResponseFull = seasonResponse.data.data.concat(seasonResponse_2.data.data)
+       activePlayersFiltered.forEach(i => i.avg = seasonResponseFull.filter(t => i.id === t.player_id)[0]) 
        setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
      } catch (error) {
        if (error.response) {
@@ -88,13 +95,13 @@ const Home = () => {
   }, [local]);
 
   useEffect(() => {
-    const testing = async () => {
+    const fetchRoster = async () => {
       if (user.uid) {
         const docRef = doc(firestore, "users", user.uid)
         const docSnap = await getDoc(docRef)
         setRoster(docSnap.data().roster)  
     }}
-    testing()
+    fetchRoster()
   },[user])
 
   const handleChange = (event) => {

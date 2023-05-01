@@ -8,7 +8,7 @@ import RosterDashboard from '../Components/RosterDashBoard';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 const Home = () => {
@@ -104,6 +104,16 @@ const Home = () => {
     fetchRoster()
   },[user])
 
+  const deleteRoster = async (playerID) => {
+    const updatedRoster = roster.filter(i => i.id !== playerID)
+    const rosterRef = doc(firestore, "users", user.uid)
+    await updateDoc(rosterRef, {
+      roster: updatedRoster
+    })
+    console.log(roster);
+    setRoster(updatedRoster)
+  }
+
   const handleChange = (event) => {
     setPlayerFilter(event.target.value)
   }
@@ -116,7 +126,7 @@ const Home = () => {
         console.log(err.message);
       }
   } 
-    
+  
   return (
        <>
        <Container>
@@ -125,7 +135,7 @@ const Home = () => {
           </Row>
           <Row>
             <Col md="6">
-              <RosterDashboard roster={roster} />
+              <RosterDashboard roster={roster} deleteRoster={deleteRoster}/>
             </Col>
             <Col md="6"><TableComponent setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/></Col>
           </Row>

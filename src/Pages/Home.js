@@ -10,6 +10,7 @@ import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import Chart from '../Components/Chart';
 
 const Home = () => {
 
@@ -90,7 +91,7 @@ const Home = () => {
   useEffect(() => {
    const localPlayers = JSON.parse(localStorage.getItem("players"))
    if (localPlayers) {
-      setActivePlayers(localPlayers)
+      setActivePlayers(localPlayers.filter(i => i.avg.games_played > 9))
    }
   }, [local]);
 
@@ -141,6 +142,7 @@ const Home = () => {
           </Row>
           <Row>
             <Col>
+            <Chart activePlayers={activePlayers} roster={roster}/>
               <Button onClick={onLogOut} variant="primary" type="submit">Sign out</Button>
             </Col>
           </Row>

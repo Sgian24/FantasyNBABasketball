@@ -1,59 +1,113 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
+import { ErrorMessage, useFormik } from "formik";
+import * as Yup from "yup";
 import { useUserAuth } from "../UserAuthContext";
 import { firestore } from "../firebase";
 import { setDoc, doc } from "firebase/firestore";
+import NBA from "../Assets/nba-graphic-cropped.png";
+import Wave from "../Assets/waveline.svg";
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Image from "react-bootstrap/Image";
 
 const Signup = () => {
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-   
     const { signUp, logOut } = useUserAuth();
-    
     const navigate = useNavigate();
     
-    const onSubmit = async (e) => {
-        e.preventDefault();
+    const onSignUp = async (em, pass) => {
+        
         setError("");
         try {
-          const userCredentials = await signUp(email, password);
+          const userCredentials = await signUp(em, pass);
           const user = userCredentials.user
           navigate("/");
           await setDoc(doc(firestore, "users", user.uid), {
             userID: user.uid,
             userEmail: user.email,
-            roster: [""]
+            roster: []
           });
           await logOut()
         } catch (err) {
           setError(err.message);
         }
     }
-    
+console.log(error);
+    const formik = useFormik({
+      initialValues: {
+          email:"",
+          password: ""
+      },
+      onSubmit: (values) => {
+          onSignUp(values.email, values.password)
+      },
+      validationSchema: Yup.object({
+          email: Yup.string().email().required(),
+          password: Yup.string().min(8, "password too short.").max(30, "password too long.").required()        
+      }),
+  })
+  console.log(formik.values.email)
     return (
-        <>
-        <Form>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email Address</Form.Label>
-              <Form.Control onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter email" />
-            </Form.Group>
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder="password" />
-            </Form.Group>
-            <Button onClick={onSubmit} variant="primary" type="submit">
-                Submit
-            </Button>
-        </Form>
-        <div>
-            <p>Have an account?</p>
-            <Link to="/">Log In</Link>
-        </div>
-        </>
+      <>
+      <style type="text/css">
+          {`
+           #signInButton {
+              background-color: #088395;
+           }
+           #signInButton:hover {
+              background-color: #065e6b;
+           }
+           @media only screen and (max-width: 765px) {
+              #nba-collage {
+                  height: 40vh !important;
+              }
+           }
+          `}
+
+      </style>
+      <Container fluid={true} >
+          <Row style={{height:"100vh"}}>
+              <Col style={{backgroundImage:`url(${Wave})`, backgroundPosition: "50% 30%"}} md="7" className="d-flex justify-content-center align-items-center bg-image">
+                  <Image id="nba-collage"style={{height: "60vh"}} src={NBA} alt="Collage of NBA players." fluid />
+                  <div style={{width: 150, marginLeft: 25}}>
+                      <h1 className=" text-white">Track your Fantasy Basketball Roster</h1>
+                      <p className="text-white">Sign in to compare your roster to other players across the NBA.</p>
+                  </div>
+              </Col>
+              <Col md="5" className="bg-white d-flex flex-column align-items-center justify-content-center">
+                  <h2 className="text-center mb-4">Create an account</h2>
+                  <Form className="w-100 d-flex flex-column align-items-center">
+                      <Form.Group className="w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicEmail">
+                          <Form.Label column md={2}>Email</Form.Label>
+                          <Col md={6}>
+                              <Form.Control onChange={formik.handleChange} name="email" type="email" placeholder="Email" isValid={!formik.errors.email && formik.values.email.length > 1} isInvalid={!!formik.errors.email} required/>
+                              <Form.Control.Feedback type="invalid">{formik.errors.email}</Form.Control.Feedback>
+                          </Col>
+                      </Form.Group>
+                      <Form.Group className="w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicPassword">
+                          <Form.Label column md={2}>Password</Form.Label>
+                          <Col md={6}>
+                              <Form.Control onChange={formik.handleChange} name="password" type="password" placeholder="Password" isValid={!formik.errors.password && formik.values.password.length > 1} isInvalid={!!formik.errors.password} />
+                              <Form.Control.Feedback type="invalid">{formik.errors.password}</Form.Control.Feedback>
+                          </Col>
+                      </Form.Group>
+                       <Button id="signInButton" className="w-25 mb-4" onClick={formik.handleSubmit} variant="primary" type="submit">
+                              Sign Up
+                      </Button>
+                      <div className="text-center">
+                          <p>Have an account? <Link style={{textDecoration: "none"}}to="/">Sign in</Link></p>
+                      </div>
+                  </Form>
+              </Col>
+          </Row>
+      </Container>
+  </>
     )
 }
 

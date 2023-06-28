@@ -51,6 +51,7 @@ const Home = () => {
           }))
           
        const activeResponse = await axios.get('https://nba-player-individual-stats.p.rapidapi.com/players', options)
+       
        response.map(i => i.data.data.map(t => totalPlayers.push(t)))
        const activePlayersFiltered = totalPlayers.filter(i => activeResponse.data
         .filter(i => i.team !== null)
@@ -58,14 +59,17 @@ const Home = () => {
         .includes(i.first_name + i.last_name) && i.id !== 448)
         // Gary Trent Jr is included a second time with a different id(448) hence the filter 
        activePlayersFiltered.map(i => playerIDs.push(i.id))
-       const slicedArray_1 = playerIDs.slice(0, 460)
-       const slicedArray_2 = playerIDs.slice(461, 508)
+       const slicedArray_1 = playerIDs.slice(0, 200)
+       const slicedArray_2 = playerIDs.slice(200, 500)
        const playerIDs_1 = slicedArray_1.map(i => `&player_ids[]=${i}`).join("") 
        const playerIDs_2 = slicedArray_2.map(i => `&player_ids[]=${i}`).join("") 
        const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022${playerIDs_1}`, {signal: abortController.signal})
        const seasonResponse_2 = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022${playerIDs_2}`, {signal: abortController.signal})
        const seasonResponseFull = seasonResponse.data.data.concat(seasonResponse_2.data.data)
-       activePlayersFiltered.forEach(i => i.avg = seasonResponseFull.filter(t => i.id === t.player_id)[0]) 
+       console.log(seasonResponseFull);
+       activePlayersFiltered.forEach(i => {i.avg = seasonResponseFull.filter(t => i.id === t.player_id)[0];
+        i.headShot = activeResponse.data.filter(t => (i.first_name + i.last_name).includes(t.firstName + t.lastName))[0].headShotUrl
+      }) 
        setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
      } catch (error) {
        if (error.response) {
@@ -111,7 +115,6 @@ const Home = () => {
     await updateDoc(rosterRef, {
       roster: updatedRoster
     })
-    console.log(roster);
     setRoster(updatedRoster)
   }
 
@@ -128,21 +131,22 @@ const Home = () => {
       }
   } 
   
+  console.log(roster);
   return (
        <>
        <Container>
           <Row>
-            <Col>NBA Player Tracker</Col>
+            <Col><h1>Fantasy Basketball Tracker</h1></Col>
           </Row>
           <Row>
             <Col md="6">
               <RosterDashboard roster={roster} deleteRoster={deleteRoster}/>
             </Col>
-            <Col md="6"><TableComponent setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/></Col>
+            <Col md="6"><Chart activePlayers={activePlayers} roster={roster}/></Col>
           </Row>
           <Row>
             <Col>
-            <Chart activePlayers={activePlayers} roster={roster}/>
+            <TableComponent setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
               <Button onClick={onLogOut} variant="primary" type="submit">Sign out</Button>
             </Col>
           </Row>

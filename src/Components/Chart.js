@@ -1,3 +1,4 @@
+import React from "react";
 import { ResponsiveBar } from "@nivo/bar";
 
 const Chart = ({activePlayers, roster}) => {
@@ -21,7 +22,7 @@ const Chart = ({activePlayers, roster}) => {
    
    const getColor = (bar) => bar.data.color
    
-   const themeTest = {
+   const theme = {
     "axis": {
         "ticks":{
             "text": {
@@ -29,16 +30,15 @@ const Chart = ({activePlayers, roster}) => {
             }
         }
     }
-   }
+  }
 
-   const Bar = () => {
-        return (
-          <>
+  return (
+          <div style={{height: 300, border:"solid 2px black"}}>
             <ResponsiveBar 
               data={totalAveragePoints}
               keys={["ppg"]}
               indexBy="Player"
-              margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+              margin={{ top: 50, right: 20, bottom: 100, left: 60 }}
               padding={0.4}
               valueScale={{ type: "linear" }}
               colors={getColor}
@@ -57,22 +57,13 @@ const Chart = ({activePlayers, roster}) => {
                 legendOffset: -40
               }}
               axisBottom={{
-                tickRotation: -40,
-                tickPadding: 2
+                tickRotation: -45,
+                tickPadding: 9
               }}
-              theme={themeTest}
+              theme={theme}
           />
-        </>   
+        </div>   
       )
-    }
-   
-    return (
-        <>
-        <div style={{height:300}}>
-            <Bar/>
-        </div>
-        </>
-    )
-}
-
-export default Chart;
+  }
+  
+export const MemoChart = React.memo(Chart)

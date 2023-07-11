@@ -9,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
-import Chart from '../Components/Chart';
+import { useEffect, useState, useRef } from 'react';
+import {MemoChart} from '../Components/Chart';
+import Radar from '../Components/Radar';
+import RadarTest from '../Components/RadarTest';
 
 const Home = () => {
 
@@ -22,6 +24,7 @@ const Home = () => {
   const [playerFilter, setPlayerFilter] = useState("");
   const [localRoster, setLocalRoster] = useState([]);
   const [roster, setRoster] = useState([]);
+  const [playerID, setPlayerID] = useState(666786);
 
   const navigate = useNavigate();
   
@@ -130,19 +133,19 @@ const Home = () => {
         console.log(err.message);
       }
   } 
-  
+  const test = useRef()
   console.log(roster);
   return (
        <>
        <Container>
           <Row>
-            <Col><h1>Fantasy Basketball Tracker</h1></Col>
+            <Col><h1>Fantasy Basketball Tracker</h1><br/></Col>
           </Row>
           <Row>
             <Col md="6">
-              <RosterDashboard roster={roster} deleteRoster={deleteRoster}/>
+              <RosterDashboard roster={roster} setPlayerID={setPlayerID} deleteRoster={deleteRoster}/>
             </Col>
-            <Col md="6"><Chart activePlayers={activePlayers} roster={roster}/></Col>
+            <Col md="6"><MemoChart activePlayers={activePlayers} roster={roster}/><Radar roster={roster} playerID={playerID} setPlayerID={setPlayerID}/></Col>
           </Row>
           <Row>
             <Col>

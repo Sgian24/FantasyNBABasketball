@@ -24,7 +24,8 @@ const Home = () => {
   const [playerFilter, setPlayerFilter] = useState("");
   const [localRoster, setLocalRoster] = useState([]);
   const [roster, setRoster] = useState([]);
-  const [playerID, setPlayerID] = useState(666786);
+  const [playerID, setPlayerID] = useState("");
+  const [player, setPlayer] = useState({})
 
   const navigate = useNavigate();
   
@@ -112,13 +113,15 @@ const Home = () => {
     fetchRoster()
   },[user])
 
-  const deleteRoster = async (playerID) => {
-    const updatedRoster = roster.filter(i => i.id !== playerID)
+  const deleteRoster = async (playerIDD) => {
+    const updatedRoster = roster.filter(i => i.id !== playerIDD)
     const rosterRef = doc(firestore, "users", user.uid)
     await updateDoc(rosterRef, {
       roster: updatedRoster
     })
-    setRoster(updatedRoster)
+    const docSnap = await getDoc(rosterRef)
+    setRoster(docSnap.data().roster)
+    setPlayerID(12345678)
   }
 
   const handleChange = (event) => {
@@ -133,8 +136,7 @@ const Home = () => {
         console.log(err.message);
       }
   } 
-  const test = useRef()
-  console.log(roster);
+
   return (
        <>
        <Container>
@@ -143,9 +145,9 @@ const Home = () => {
           </Row>
           <Row>
             <Col md="6">
-              <RosterDashboard roster={roster} setPlayerID={setPlayerID} deleteRoster={deleteRoster}/>
+              <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} setPlayer={setPlayer} deleteRoster={deleteRoster}/>
             </Col>
-            <Col md="6"><MemoChart activePlayers={activePlayers} roster={roster}/><Radar roster={roster} playerID={playerID} setPlayerID={setPlayerID}/></Col>
+            <Col md="6"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player} /><MemoChart activePlayers={activePlayers} roster={roster}/></Col>
           </Row>
           <Row>
             <Col>

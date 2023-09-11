@@ -37,31 +37,26 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID}) => {
              .dashboard:hover {
                 background-color: #00000013;
              }
-             .Stats-button, .Waive-button {
-              background-color: #088395;
-             }
-             .Stats-button:hover, .Waive-button:hover {
-              background-color: #065e6b;
-             }
             `}
         </style> 
-        <Container className='overflow-auto border' style={{height:"500px"}} fluid={true}>
+        <Container className='overflow-auto d-flex align-items-center border' style={{height:"120px"}} fluid={true}>
+         <Row className="d-flex flex-nowrap" >
          {roster.map((i, index) => 
-          <Row key={i.id} className="dashboard d-flex align-items-center border" style={{height: "100px"}}>
-            <Col md={3} >
-              <Image id="headshot" src={i.headShot} fluid/>
+          <Col key={i.id} className="dashboard d-flex align-items-center justify-content-center border gap-1" style={{height: "100px",width: "20vw"}}>
+            <Col className='d-flex flex-column gap-2' style={{width: "3vw"}}>
+              <Button size="sm" variant="outline-primary" ref={element => statButton.current[index] = element} style={{fontSize: "2vh", fontWeight:"bold", width: "6vw"}} className='Stats-button' name={i.id}>VIEW</Button>
+              <Button size="sm" variant="outline-danger" ref={element => waiveButton.current[index] = element} style={{fontSize: "2vh",  fontWeight:"bold", width: "6vw"}} className="Waive-button" name={i.id} >WAIVE</Button>
             </Col>
-            <Col className="player-name" md={5}>
-              {i.first_name + " " + i.last_name}
+            <Col className="">
+              <Image id="headshot" src={i.headShot} style={{height: "10vh", }} />
             </Col>
-            <Col >
-            <Button ref={element => statButton.current[index] = element} className='Stats-button' name={i.id}>Stats</Button>
+            <Col md={2}style={{width: "5vw", fontSize:"0.8em", fontWeight:"bold", overflowWrap: "break-word"}}>
+              {i.first_name} <br></br>
+              {i.last_name}
             </Col>
-            <Col>
-            <Button ref={element => waiveButton.current[index] = element} className="Waive-button" name={i.id} >Waive</Button>
-            </Col>
-          </Row>
-          )}    
+          </Col>
+          )}
+          </Row>    
         </Container>
       </>
   )

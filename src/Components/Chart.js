@@ -1,24 +1,29 @@
 import React from "react";
 import { ResponsiveBar } from "@nivo/bar";
+import { useState } from "react";
+import Button from "react-bootstrap/Button";
 
 const Chart = ({activePlayers, roster}) => {
+
+  const [rebounds, setRebounds] = useState("pts")
     
   const averagePoints = parseFloat((activePlayers.map(i => i.avg.pts)
     .reduce((accumulator, currentValue) => accumulator + currentValue, 0)/441)
     .toFixed(1));
 
   const rosterAveragePoints = roster.map(i => ({
-        ppg:i.avg.pts,
+        ppg:i.avg[rebounds],
         Player: i.first_name + " " + i.last_name,
         color: "#56A6A9"
         }))
-  const leagueAveragePoints = {
+        
+  const leagueAveragePoints = [{
         ppg: averagePoints,
         Player: "League Average",
         color: "#8356A9"
-   }
+   }]
    
-   const totalAveragePoints = rosterAveragePoints.concat(leagueAveragePoints)
+   const totalAveragePoints = leagueAveragePoints.concat(rosterAveragePoints)
    
    const getColor = (bar) => bar.data.color
    
@@ -33,8 +38,9 @@ const Chart = ({activePlayers, roster}) => {
   }
 
   return (
-          <div style={{height: 300, border:"solid 2px black"}}>
-            <ResponsiveBar 
+          <div style={{height: 300}}>
+            <div style={{paddingTop: 10}}><Button variant="outline-secondary">Rebounds</Button><Button variant="outline-secondary">Assists</Button><Button variant="outline-secondary">Blocks</Button><Button variant="outline-secondary">Steals</Button></div>
+            <ResponsiveBar style={{border: "solid 1px black"}}
               data={totalAveragePoints}
               keys={["ppg"]}
               indexBy="Player"
@@ -62,7 +68,7 @@ const Chart = ({activePlayers, roster}) => {
               }}
               theme={theme}
           />
-        </div>   
+        </div>
       )
   }
   

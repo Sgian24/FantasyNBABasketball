@@ -173,13 +173,13 @@ const Home = () => {
        <>
        <Container>
           <Row>
-            <Col><h1>Fantasy Basketball Tracker</h1><br/></Col>
+            <Col style={{marginBottom: "4vh", padding: 0}}><h1>Fantasy Basketball Tracker</h1></Col>
           </Row>
-          <Row>
-            <Col md="6">
+          <Row style={{marginBottom: "5vh"}}>
               <RosterDashboard roster={roster} setPlayerID={setPlayerID} deleteRoster={deleteRoster}/>
-            </Col>
-            <Col md="6"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player} /><MemoChart activePlayers={activePlayers} roster={roster}/></Col>
+          </Row>
+          <Row className="border" style={{marginBottom: "4vh", height: 350}}>
+          <Col md="6"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md="6"><MemoChart activePlayers={activePlayers} roster={roster}/></Col>
           </Row>
           <Row>
             <Col>

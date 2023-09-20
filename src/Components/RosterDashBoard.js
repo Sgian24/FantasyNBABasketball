@@ -11,10 +11,15 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID}) => {
   const waiveButton = useRef([])
   const waiveButtonRef = waiveButton.current;
 
-  useEffect(() => {   
+  useEffect(() => {
+    const onClick = (name,e) => {
+      setPlayerID(Number(name))
+      buttonRef.forEach(i => i.classList.remove("active"))
+      e.target.classList.add("active")
+    }   
     if (buttonRef[0]) { 
-      buttonRef.forEach(i => i?.addEventListener("click", () => setPlayerID(Number(i.name))))
-      return () => buttonRef.forEach(i => i?.removeEventListener("click", () => setPlayerID(Number(i.name))))
+      buttonRef.forEach(i => i?.addEventListener("click", (e) => onClick(i.name, e)))
+      return () => buttonRef.forEach(i => i?.removeEventListener("click", (e) => onClick(i.name, e)))
       }
     },[roster])
     
@@ -44,7 +49,7 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID}) => {
          {roster.map((i, index) => 
           <Col key={i.id} className="dashboard d-flex align-items-center justify-content-center border gap-1" style={{height: "100px",width: "20vw"}}>
             <Col className='d-flex flex-column gap-2' style={{width: "3vw"}}>
-              <Button size="sm" variant="outline-primary" ref={element => statButton.current[index] = element} style={{fontSize: "2vh", fontWeight:"bold", width: "6vw"}} className='Stats-button' name={i.id}>VIEW</Button>
+              <Button size="sm" variant="outline-secondary" ref={element => statButton.current[index] = element} style={{fontSize: "2vh", fontWeight:"bold", width: "6vw"}} className='Stats-button' name={i.id}>VIEW</Button>
               <Button size="sm" variant="outline-danger" ref={element => waiveButton.current[index] = element} style={{fontSize: "2vh",  fontWeight:"bold", width: "6vw"}} className="Waive-button" name={i.id} >WAIVE</Button>
             </Col>
             <Col className="">

@@ -1,6 +1,6 @@
 import React from "react";
 import { ResponsiveBar } from "@nivo/bar";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 
 const Chart = ({activePlayers, roster, chartType, setChartType}) => {
@@ -37,20 +37,38 @@ const Chart = ({activePlayers, roster, chartType, setChartType}) => {
     "axis": {
         "ticks":{
             "text": {
-                "fontSize": 8
+                "fontSize": 8,
+                "fontFamily": "Arial"
             }
         }
     }
   }
 
+  const statButton = useRef([]);
+  const statButtonRef = statButton.current;
+
+  useEffect(() => {
+    const onClick = (stat, e) => {
+      setChartType(stat === "Points"? "pts"
+                  :stat === "Rebounds"? "reb"
+                  :stat === "Assists"? "ast"
+                  :stat === "Blocks"? "blk"
+                  :"stl"); 
+      statButtonRef.forEach(i => i.classList.remove("active"))
+      e.target.classList.add("active")
+    }
+    statButtonRef.forEach(i => i.addEventListener("click", (e) => onClick(i.innerHTML, e)))
+    return () => statButtonRef.forEach(i => i.removeEventListener("click", (e) => onClick(i.innerHTML, e)))
+  },[])
+  console.log(statButtonRef);
   return (
           <div style={{height: 300}}>
-            <div style={{paddingTop: 10}}>
-              <Button style={{width: "6vw",}}variant="outline-secondary" onClick={() => setChartType("pts")}>Points</Button>
-              <Button variant="outline-secondary" onClick={() => setChartType("reb")}>Rebounds</Button>
-              <Button variant="outline-secondary" onClick={() => setChartType("ast")}>Assists</Button>
-              <Button variant="outline-secondary" onClick={() => setChartType("blk")}>Blocks</Button>
-              <Button variant="outline-secondary" onClick={() => setChartType("stl")}>Steals</Button>
+            <div style={{paddingTop: 20}} className="d-flex gap-2">
+              <Button style={{width: "8vw"}} active ref={element => statButton.current[0] = element} variant="outline-secondary" >Points</Button>
+              <Button style={{width: "8vw"}} ref={element => statButton.current[1] = element} variant="outline-secondary" >Rebounds</Button>
+              <Button style={{width: "8vw"}} ref={element => statButton.current[2] = element} variant="outline-secondary" >Assists</Button>
+              <Button style={{width: "8vw"}} ref={element => statButton.current[3] = element} variant="outline-secondary" >Blocks</Button>
+              <Button style={{width: "8vw"}} ref={element => statButton.current[4] = element} variant="outline-secondary" >Steals</Button>
             </div>
             <ResponsiveBar style={{border: "solid 1px black"}}
               data={totalAverageStats}

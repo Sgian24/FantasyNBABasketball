@@ -5,27 +5,21 @@ import Col from "react-bootstrap/Col";
 import Button from 'react-bootstrap/Button';
 import { useEffect, useRef } from 'react';
 
-const RosterDashboard = ({roster, deleteRoster, playerID, setPlayerID}) => {
+const RosterDashboard = ({roster, deleteRoster, setPlayerID}) => {
   const statButton = useRef([]);
   const buttonRef = statButton.current;
   const waiveButton = useRef([])
   const waiveButtonRef = waiveButton.current;
 
   useEffect(() => {
-    if (buttonRef[0]) { 
-      buttonRef.forEach(i => i?.addEventListener("click", () => setPlayerID(Number(i.name))))
-      return () => buttonRef.forEach(i => i?.removeEventListener("click", () => setPlayerID(Number(i.name))))
-      }
-    },[roster])
-
-  useEffect(() => {
-      const onClick = (e) => {
+      const onClick = (e, id) => {
       buttonRef.forEach(i => i?.classList.remove("active"))
       e.target.classList.add("active")
+      setPlayerID(Number(id))
     }   
     if (buttonRef[0]) { 
-      buttonRef.forEach(i => i?.addEventListener("click", (e) => onClick(e)))
-      return () => buttonRef.forEach(i => i?.removeEventListener("click", (e) => onClick(e)))
+      buttonRef.forEach(i => i?.addEventListener("click", (e) => onClick(e, i.name)))
+      return () => buttonRef.forEach(i => i?.removeEventListener("click", (e) => onClick(e, i.name)))
       }
   },[roster])
     

@@ -12,6 +12,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState, useRef } from 'react';
 import {MemoChart} from '../Components/Chart';
 import Radar from '../Components/Radar';
+import NavBar from '../Components/NavigationBar';
 
 const Home = () => {
 
@@ -24,7 +25,8 @@ const Home = () => {
   const [roster, setRoster] = useState([]);
   const [playerID, setPlayerID] = useState("");
   const [player, setPlayer] = useState({})
-  const [chart, setChart] = useState("PPG")
+  const [chartType, setChartType] = useState("pts")
+  const [position, setPosition] = useState(-1000)
 
   const navigate = useNavigate();
 
@@ -76,7 +78,9 @@ const Home = () => {
                            {Name:"Eric",
                             headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3431.png"}, 
                            {Name:"Lonnie",
-                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277890.png"}, 
+                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277890.png"},
+                            {Name:"OG",
+                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3934719.png"} 
                            ]
 
        const activePlayersFiltered = totalPlayers.filter(i => activeResponse.data
@@ -99,7 +103,7 @@ const Home = () => {
         activeResponse.data.filter(t => (i.first_name + i.last_name).includes(t.firstName + t.lastName))[0].headShotUrl
       })
        setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
-       console.log("locall", activePlayersFiltered.filter(i => i.first_name === "Bruce"));
+       console.log("locall", activePlayersFiltered.filter(i => i.first_name === "OG"));
        console.log(freeAgentHeadShots);
      } catch (error) {
        if (error.response) {
@@ -170,25 +174,18 @@ const Home = () => {
   } 
 
   return (
-       <>
+       <div>
+       <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut}/>
        <Container>
-          <Row>
-            <Col style={{marginBottom: "4vh", padding: 0}}><h1>Fantasy Basketball Tracker</h1></Col>
-          </Row>
           <Row style={{marginBottom: "5vh"}}>
-              <RosterDashboard roster={roster} setPlayerID={setPlayerID} deleteRoster={deleteRoster}/>
+            <TableComponent position={position} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
+            <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster}/>
           </Row>
           <Row className="border" style={{marginBottom: "4vh", height: 350}}>
-          <Col md="6"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md="6"><MemoChart activePlayers={activePlayers} roster={roster}/></Col>
-          </Row>
-          <Row>
-            <Col>
-            <TableComponent setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
-              <Button onClick={onLogOut} variant="primary" type="submit">Sign out</Button>
-            </Col>
+            <Col md="6"><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col><Col md="6"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col>
           </Row>
       </Container>
-      </>
+      </div>
   )
 }
 

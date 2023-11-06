@@ -3,8 +3,9 @@ import { useUserAuth } from '../UserAuthContext';
 import { doc, updateDoc } from 'firebase/firestore';
 import { firestore } from '../firebase';
 import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 
-const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster}) => {
+const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster, position}) => {
 
     const {user} = useUserAuth();
     
@@ -30,7 +31,6 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
       await updateDoc(rosterRef, {
         roster: updatedRoster
       })
-      console.log(roster);
       setRoster(updatedRoster)
     }}
        
@@ -61,16 +61,17 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
     })
     
     return (
-        <div>
+        <div className="position-absolute border pt-3"style={{ right:position, top:170, width: "45vw", height:480, transitionDuration:".5s", backgroundColor:"#eff0f2"}}>
             <style type="text/css">
               {`  
               .Statistics-Table {
                 overflow: scroll;
                 position: relative;
-                height: 400px;
+                height: 66vh;
                 width: 100%;
                 border: 1px solid black;
                 z-index: 1;
+                background-color: white;
               }
               
               Table {
@@ -101,7 +102,7 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
               }
 
                tbody tr td:nth-child(1) {
-                min-width: 175px;
+                min-width: 14vw;
                 position: sticky;
                 left: 0;
                 background: white;
@@ -113,7 +114,7 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                }
              `}    
             </style>
-            <input style={{marginBottom:"5px"}}onChange={handleChange} type="text" />
+            <input className="border" style={{marginBottom:"0.5rem"}}onChange={handleChange} type="text" />
             <div className='Statistics-Table'>
               <Table size="sm" bordered hover>
                 <thead>
@@ -133,7 +134,7 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                 </thead>
                 <tbody id="Statistics-Table-Body" >
                    {playerSort.map(i =><tr key={i.id}>
-                    <td><button onClick={() => onClick(i.id)}>Draft</button>{i.first_name} {i.last_name} </td>
+                    <td><Button className="me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)}>Draft</Button>{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
                     <td >{i.avg.min}</td>
                     <td >{i.avg.pts.toFixed(1)}</td>

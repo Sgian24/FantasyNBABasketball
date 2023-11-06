@@ -26,7 +26,7 @@ const Home = () => {
   const [playerID, setPlayerID] = useState("");
   const [player, setPlayer] = useState({})
   const [chartType, setChartType] = useState("pts")
-  const [position, setPosition] = useState(-1000)
+  const [position, setPosition] = useState(1280)
 
   const navigate = useNavigate();
 
@@ -103,8 +103,6 @@ const Home = () => {
         activeResponse.data.filter(t => (i.first_name + i.last_name).includes(t.firstName + t.lastName))[0].headShotUrl
       })
        setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
-       console.log("locall", activePlayersFiltered.filter(i => i.first_name === "OG"));
-       console.log(freeAgentHeadShots);
      } catch (error) {
        if (error.response) {
          console.log(error.response.data);
@@ -172,17 +170,17 @@ const Home = () => {
         console.log(err.message);
       }
   } 
-
+  console.log(activePlayers, "ap");
   return (
        <div>
        <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut}/>
-       <Container>
+       <Container className='p-4 rounded position-relative' style={{backgroundColor:"#eeeeee", height: "102vh", overflow:"hidden"}}>
           <Row style={{marginBottom: "5vh"}}>
             <TableComponent position={position} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
-            <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster}/>
+            <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
           </Row>
-          <Row className="border" style={{marginBottom: "4vh", height: 350}}>
-            <Col md="6"><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col><Col md="6"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col>
+          <Row style={{marginBottom: "4vh", height: "58vh"}}>
+            <Col md="6" className="ps-0 "><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md="6" className='pe-0' ><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col>
           </Row>
       </Container>
       </div>

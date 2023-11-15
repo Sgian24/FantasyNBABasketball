@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ErrorMessage, useFormik } from "formik";
 import * as Yup from "yup";
 import { useUserAuth } from "../UserAuthContext";
-import { firestore } from "../firebase";
+import { firestore} from "../firebase";
 import { setDoc, doc } from "firebase/firestore";
 import NBA from "../Assets/nba-graphic-cropped.png";
 import Wave from "../Assets/waveline.svg";
@@ -29,6 +29,7 @@ const Signup = () => {
           const user = userCredentials.user
           navigate("/");
           await setDoc(doc(firestore, "users", user.uid), {
+            user: formik.values.user,
             userID: user.uid,
             userEmail: user.email,
             roster: []
@@ -36,11 +37,13 @@ const Signup = () => {
           await logOut()
         } catch (err) {
           setError(err.message);
+          console.log(error);
         }
     }
-console.log(error);
+
     const formik = useFormik({
       initialValues: {
+          user: "",
           email:"",
           password: ""
       },
@@ -48,11 +51,12 @@ console.log(error);
           onSignUp(values.email, values.password)
       },
       validationSchema: Yup.object({
+          user: Yup.string().max(30, "Username too long").required(),
           email: Yup.string().email().required(),
           password: Yup.string().min(8, "password too short.").max(30, "password too long.").required()        
       }),
   })
-  console.log(formik.values.email)
+  
     return (
       <>
       <style type="text/css">
@@ -82,7 +86,18 @@ console.log(error);
               </Col>
               <Col md="5" className="bg-white d-flex flex-column align-items-center justify-content-center">
                   <h2 className="text-center mb-4">Create an account</h2>
+                  { error? <Alert className="d-flex align-items-center" style={{width: 350}} onClose={() => setError("")} variant="danger" dismissible> 
+                            {error === "Firebase: Error (auth/email-already-in-use)."? "Email already in use.": "Invalid email."}   
+                           </Alert>: <></>
+                    }
                   <Form className="w-100 d-flex flex-column align-items-center">
+                      <Form.Group className="w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicPassword">
+                          <Form.Label column md={2}>Username</Form.Label>
+                          <Col md={6}>
+                              <Form.Control onChange={formik.handleChange} name="user" type="text" placeholder="Username" isValid={!formik.errors.user && formik.values.user.length > 0} isInvalid={!!formik.errors.user} />
+                              <Form.Control.Feedback type="invalid">{formik.errors.user}</Form.Control.Feedback>
+                          </Col>
+                      </Form.Group>
                       <Form.Group className="w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicEmail">
                           <Form.Label column md={2}>Email</Form.Label>
                           <Col md={6}>

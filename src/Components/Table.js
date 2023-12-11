@@ -4,8 +4,9 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { firestore } from '../firebase';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import CloseButton from 'react-bootstrap/CloseButton';
 
-const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster, position}) => {
+const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster, position, setPosition}) => {
 
     const {user} = useUserAuth();
     
@@ -59,17 +60,16 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
           return parseInt(b.avg.min.split(':')[0] * 60 + b.avg.min.split(':')[1]) - parseInt(a.avg.min.split(':')[0] * 60 + a.avg.min.split(':')[1]) ;
       }
     })
-    
+    console.log(position);
     return (
-        <div className="position-absolute border pt-3"style={{ right:position, top:170, width: "45vw", height:480, transitionDuration:".5s", backgroundColor:"#eff0f2"}}>
+        <div className="position-absolute border pt-3"style={{ zIndex:3,right:position, top:140, width: "45vw", height:380, transitionDuration:".5s", backgroundColor:"#eff0f2"}}>
             <style type="text/css">
               {`  
               .Statistics-Table {
                 overflow: scroll;
                 position: relative;
-                height: 66vh;
+                height: 54vh;
                 width: 100%;
-                border: 1px solid black;
                 z-index: 1;
                 background-color: white;
               }
@@ -101,8 +101,12 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                font-size: 14px;
               }
 
+              td {
+               font-size: 12px; 
+              }
+
                tbody tr td:nth-child(1) {
-                min-width: 14vw;
+                min-width: 17vw;
                 position: sticky;
                 left: 0;
                 background: white;
@@ -112,9 +116,16 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                .Statistics-Table tbody tr td {
                 border-bottom: solid 1px #dee2e6;
                }
+
+               input::placeholder {
+                font-size: 12px;
+               }
              `}    
             </style>
-            <input className="border" style={{marginBottom:"0.5rem"}}onChange={handleChange} type="text" />
+            <div className='d-flex align-items-center justify-content-between'>
+              <input className="border pb-1 px-1" style={{marginBottom:"0.5rem", outlineColor:"#456990"}} onChange={handleChange} type="text" placeholder='Search player'/>
+              <CloseButton onClick={() => setPosition(position === 570? 1280: 1000)} className='mb-2' aria-label='Close'></CloseButton>
+            </div> 
             <div className='Statistics-Table'>
               <Table size="sm" bordered hover>
                 <thead>
@@ -134,7 +145,7 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                 </thead>
                 <tbody id="Statistics-Table-Body" >
                    {playerSort.map(i =><tr key={i.id}>
-                    <td><Button className="me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)}>Draft</Button>{i.first_name} {i.last_name} </td>
+                    <td><Button className="me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)}>DRAFT</Button>{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
                     <td >{i.avg.min}</td>
                     <td >{i.avg.pts.toFixed(1)}</td>

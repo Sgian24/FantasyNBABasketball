@@ -67,7 +67,7 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
                                         : props.id === "Blocks"? 105.98122626311812 + 21
                                         : -40.481226263118096 + 21
                                         })`}>   
-                <text alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={12} >
+                <text alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={20} fill={"#028090"} >
                     {
                     props.id === "Points" & playerID !== ""? player?.avg.pts
                     : props.id === "Assists"  & playerID !== ""? player?.avg.ast
@@ -79,8 +79,15 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
              </g>
             </>
         )}
+
+      const colour = {
+        blue: "#028090"
+      }
     return (
-        <div style={{height: 300}}>
+     <>
+       <h5>Radar</h5>
+       <div className='bg-white h-100 rounded border'> 
+        <div style={{height: "50vh"}}>
          <ResponsiveRadar
             data={radarData}
             keys={[radarNames]}
@@ -94,9 +101,10 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
             dotSize={0}
             dotColor={{ theme: 'background' }}
             dotBorderWidth={2}
-            colors={{ scheme: 'category10' }}
+            colors={colour.blue}
             blendMode="multiply"
             motionConfig="wobbly"
+            isInteractive={false}
             legends={[{
                 anchor: 'top-left',
                 direction: 'column',
@@ -118,6 +126,8 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
             }]}
          />
         </div>
+       </div>
+     </>
     )   
 }
 

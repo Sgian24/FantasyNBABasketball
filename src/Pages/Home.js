@@ -8,7 +8,7 @@ import RosterDashboard from '../Components/RosterDashBoard';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, getDocs, collection } from 'firebase/firestore';
 import { useEffect, useState, useRef } from 'react';
 import {MemoChart} from '../Components/Chart';
 import Radar from '../Components/Radar';
@@ -27,6 +27,8 @@ const Home = () => {
   const [player, setPlayer] = useState({})
   const [chartType, setChartType] = useState("pts")
   const [position, setPosition] = useState(1280)
+  const [userName, setUserName] = useState("");
+  const [show, setShow] = useState(false);
 
   const navigate = useNavigate();
 
@@ -136,7 +138,11 @@ const Home = () => {
       if (user.uid) {
         const docRef = doc(firestore, "users", user.uid)
         const docSnap = await getDoc(docRef)
-        setRoster(docSnap.data().roster)  
+        /*const collect = await getDocs(collection(firestore, "users"))
+        const empty = []
+        collect.forEach(i => empty.push(i.data().user))*/
+        setRoster(docSnap.data().roster)
+        setUserName(docSnap.data().user)
     }}
     fetchRoster()
   },[user])
@@ -170,13 +176,13 @@ const Home = () => {
         console.log(err.message);
       }
   } 
-  console.log(activePlayers, "ap");
+
   return (
        <div>
-       <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut}/>
-       <Container className='p-4 rounded position-relative' style={{backgroundColor:"#eeeeee", height: "102vh", overflow:"hidden"}}>
-          <Row style={{marginBottom: "5vh"}}>
-            <TableComponent position={position} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
+       <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut} userName={userName} show={show} setShow={setShow}/>
+       <Container className='pt-1 rounded position-relative' style={{backgroundColor:"#f8f8f8", height: "90vh", overflow:"hidden"}}>
+          <Row style={{marginBottom: "1vh"}}>
+            <TableComponent position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
             <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
           </Row>
           <Row style={{marginBottom: "4vh", height: "58vh"}}>

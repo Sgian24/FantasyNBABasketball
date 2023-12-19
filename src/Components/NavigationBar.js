@@ -7,7 +7,7 @@ import InfoCircleFill from "../Assets/info-circle-fill.svg";
 import Modal from 'react-bootstrap/Modal';
 
 const NavBar = ({onLogOut, show, setShow, userName}) => {
-
+  
     return (
         <>
         <style type="text/css">
@@ -21,20 +21,18 @@ const NavBar = ({onLogOut, show, setShow, userName}) => {
           
           .info:hover {
             background-image: url("${InfoCircleFill}")
-          }
+          } 
           `}
-
         </style>
-        <Container fluid>
-           <Row style={{height: "8vh", marginBottom: "2vh", paddingLeft: "4vw", paddingRight: "4.5vw", }}className="d-flex align-items-center bg-white" >
-            <Col className='d-flex gap-1' md={8} style={{ paddingLeft: "1.5vw", }}>
+        <Container className=" bg-white px-5 h-100" >
+           <Row className="row-container d-flex align-items-center justify-content-between " style={{height: "8vh", marginBottom: "2vh" }}>
+            <Col className='d-flex gap-1'>
               <h5 style={{fontWeight:"normal"}}>Welcome,</h5>
               <h5 style={{color:"#456990"}}>{userName}</h5>
             </Col>
-            
             <Col className="d-flex justify-content-end align-items-center gap-3">
               <div className="info" onClick={() => setShow(true)}></div>
-              <Button onClick={onLogOut} type="submit" size="sm" style={{width: "6vw", marginRight:"0.2vw"}}variant="primary">Log out</Button>
+              <Button onClick={onLogOut} type="submit" size="sm" style={{minWidth: "6vw", marginRight:"0.2vw", fontSize:"0.9rem"}}variant="primary">Log out</Button>
             </Col>
             <Modal show={show} onHide={() => setShow(false)}>
               <Modal.Header closeButton>
@@ -46,7 +44,7 @@ const NavBar = ({onLogOut, show, setShow, userName}) => {
             </Modal>
           </Row>
           </Container>
-        </>
+      </>
     )   
 }
 

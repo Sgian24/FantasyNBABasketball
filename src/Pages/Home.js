@@ -178,9 +178,11 @@ const Home = () => {
   } 
 
   return (
-       <div>
-       <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut} userName={userName} show={show} setShow={setShow}/>
-       <Container className='pt-1 rounded position-relative' style={{backgroundColor:"#f8f8f8", height: "90vh", overflow:"hidden"}}>
+       <div> 
+       <Container className='position-relative ' style={{backgroundColor:"#f8f8f8", height: "100vh", overflow:"hidden"}} fluid>
+          <Row className='mb-3' style={{height:"8vh"}}>
+            <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut} userName={userName} show={show} setShow={setShow}/>
+          </Row>
           <Row style={{marginBottom: "1vh"}}>
             <TableComponent position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
             <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>

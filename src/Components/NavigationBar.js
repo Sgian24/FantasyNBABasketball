@@ -9,7 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 const NavBar = ({onLogOut, show, setShow, userName}) => {
   
     return (
-        <>
+        <div className='px-0'>
         <style type="text/css">
           {`
           .info {
@@ -22,17 +22,23 @@ const NavBar = ({onLogOut, show, setShow, userName}) => {
           .info:hover {
             background-image: url("${InfoCircleFill}")
           } 
+
+          @media only screen and (max-width: 768px) {
+            .nav-row {
+              padding-right: 1rem;
+            }
+           }
           `}
         </style>
-        <Container className=" bg-white px-5 h-100" >
-           <Row className="row-container d-flex align-items-center justify-content-between " style={{height: "8vh", marginBottom: "2vh" }}>
-            <Col className='d-flex gap-1'>
+        <Container className="d-flex justify-content-center px-0" style={{width:"95%"}} fluid>
+           <Row className="nav-row d-flex align-items-center " style={{height: "8vh", marginBottom: "2vh", width:"100%" }}>
+            <Col className='d-flex gap-1 px-0'>
               <h5 style={{fontWeight:"normal"}}>Welcome,</h5>
               <h5 style={{color:"#456990"}}>{userName}</h5>
             </Col>
-            <Col className="d-flex justify-content-end align-items-center gap-3">
+            <Col className="d-flex justify-content-end align-items-center gap-3 px-0 ">
               <div className="info" onClick={() => setShow(true)}></div>
-              <Button onClick={onLogOut} type="submit" size="sm" style={{minWidth: "6vw", marginRight:"0.2vw", fontSize:"0.9rem"}}variant="primary">Log out</Button>
+              <Button onClick={onLogOut} type="submit" size="sm" style={{minWidth: "6vw", fontSize:"0.9rem"}}variant="primary">Log out</Button>
             </Col>
             <Modal show={show} onHide={() => setShow(false)}>
               <Modal.Header closeButton>
@@ -44,7 +50,7 @@ const NavBar = ({onLogOut, show, setShow, userName}) => {
             </Modal>
           </Row>
           </Container>
-      </>
+      </div>
     )   
 }
 

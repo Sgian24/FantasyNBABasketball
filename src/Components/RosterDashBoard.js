@@ -32,7 +32,7 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID, position, setPositi
     },[roster])
 
   return (
-        <div className='px-5'>
+        <div className='px-0'>
          <style type="text/css">
             {`
             @media only screen and (max-width: 992px) {
@@ -88,7 +88,7 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID, position, setPositi
         </style>
        <div className='d-flex p-0 mb-2 gap-3'>
         <h5 className="p-0 pt-2 " style={{lineHeight:"0.2"}}>Roster</h5>
-        <Button onClick={() => setPosition(position === 1280? 570: 1280)} size="sm"  variant="outline-primary" style={{height: "4vh", minWidth:"4vw", fontSize:"0.65rem"}}>DRAFT</Button>
+        <Button onClick={() => setPosition(position === 1280? 660: 1280)} size="sm"  variant="outline-primary" style={{height: "4vh", minWidth:"4vw", fontSize:"0.65rem"}}>DRAFT</Button>
        </div> 
         <Container className='d-flex align-items-center bg-white p-0 rounded border' style={{height:"17vh", overflowY:"hidden"}} fluid >
          <Row className="d-flex flex-nowrap gx-0 p-0 w-100 rounded">

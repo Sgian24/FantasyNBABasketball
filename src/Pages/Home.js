@@ -178,17 +178,38 @@ const Home = () => {
   } 
 
   return (
-       <div> 
-       <Container className='position-relative ' style={{backgroundColor:"#f8f8f8", height: "100vh", overflow:"hidden"}} fluid>
-          <Row className='mb-3' style={{height:"8vh"}}>
+       <div className='d-flex flex-column justify-content-center ' >
+       <style>
+        {`
+         @media only screen and (max-width: 768px) {
+          .radar-container, .bar-container {
+            padding: 0px;
+          }
+          .page-container {
+            height: 160vh !important;
+          }
+          .row-container {
+            row-gap: 7vh;
+          }
+        }
+        `}
+        </style> 
+        <Container className="" fluid>
+          <Row className='mb-3 border bg-white' style={{height:"8vh", width:"100vw"}}>
             <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut} userName={userName} show={show} setShow={setShow}/>
-          </Row>
-          <Row style={{marginBottom: "1vh"}}>
+      </Row>
+      </Container>
+       <Container className='page-container position-relative' style={{backgroundColor:"#f8f8f8", height: "100vh", overflow:"hidden", width: "95%"}} fluid>
+       
+          <Row className="" style={{marginBottom: "1vh", overflow:"hidden", }}>
+            
             <TableComponent position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
+            
             <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
           </Row>
-          <Row style={{marginBottom: "4vh", height: "58vh"}}>
-            <Col md="6" className="ps-0 "><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md="6" className='pe-0' ><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col>
+          
+          <Row className="row-container" style={{height: "58vh"}}>
+            <Col md={6} className="radar-container ps-0"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md={6} className='bar-container pe-0' ><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col>
           </Row>
       </Container>
       </div>

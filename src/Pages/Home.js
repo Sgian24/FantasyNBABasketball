@@ -2,13 +2,12 @@ import axios from 'axios';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from "react-bootstrap/Button";
 import TableComponent from '../Components/Table';
 import RosterDashboard from '../Components/RosterDashBoard';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
-import { doc, getDoc, updateDoc, getDocs, collection } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState, useRef } from 'react';
 import {MemoChart} from '../Components/Chart';
 import Radar from '../Components/Radar';
@@ -26,13 +25,16 @@ const Home = () => {
   const [playerID, setPlayerID] = useState("");
   const [player, setPlayer] = useState({})
   const [chartType, setChartType] = useState("pts")
-  const [position, setPosition] = useState(1280)
+  const [position, setPosition] = useState("100%")
+  const [showTable, setShowTable] = useState(false)
   const [userName, setUserName] = useState("");
   const [show, setShow] = useState(false);
 
   const navigate = useNavigate();
 
-  const refTest = useRef()
+  const playerIDRef = useRef()
+
+  const tableRef = useRef()
 
   const options = {
     method: 'GET',
@@ -138,9 +140,6 @@ const Home = () => {
       if (user.uid) {
         const docRef = doc(firestore, "users", user.uid)
         const docSnap = await getDoc(docRef)
-        /*const collect = await getDocs(collection(firestore, "users"))
-        const empty = []
-        collect.forEach(i => empty.push(i.data().user))*/
         setRoster(docSnap.data().roster)
         setUserName(docSnap.data().user)
     }}
@@ -148,7 +147,7 @@ const Home = () => {
   },[user])
 
   useEffect(() => {
-    refTest.current = playerID
+    playerIDRef.current = playerID
   })
 
   const deleteRoster = async (ID) => {
@@ -159,7 +158,7 @@ const Home = () => {
     })
     const docSnap = await getDoc(rosterRef)
     setRoster(docSnap.data().roster)
-    if (refTest.current === ID) {
+    if (playerIDRef.current === ID) {
       setPlayerID(12345)
     }
   }
@@ -176,7 +175,7 @@ const Home = () => {
         console.log(err.message);
       }
   } 
-
+  
   return (
        <div className='d-flex flex-column justify-content-center ' >
        <style>
@@ -200,15 +199,11 @@ const Home = () => {
       </Row>
       </Container>
        <Container className='page-container position-relative' style={{backgroundColor:"#f8f8f8", height: "100vh", overflow:"hidden", width: "95%"}} fluid>
-       
           <Row className="" style={{marginBottom: "1vh", overflow:"hidden", }}>
-            
-            <TableComponent position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
-            
-            <RosterDashboard roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
+            <TableComponent tableRef={tableRef} showTable={showTable} setShowTable={setShowTable} position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
+            <RosterDashboard getRef={tableRef} showTable={showTable} setShowTable={setShowTable} roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
           </Row>
-          
-          <Row className="row-container" style={{height: "58vh"}}>
+           <Row className="row-container" style={{height: "58vh"}}>
             <Col md={6} className="radar-container ps-0"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md={6} className='bar-container pe-0' ><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col>
           </Row>
       </Container>

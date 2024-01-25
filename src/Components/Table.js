@@ -6,9 +6,11 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import CloseButton from 'react-bootstrap/CloseButton';
 
-const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster, position, setPosition}) => {
+const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster, showTable, setShowTable}) => {
 
     const {user} = useUserAuth();
+
+    const query = window.matchMedia("(max-width: 768px)")
     
     useEffect(() => {
         const ths = document.querySelectorAll("th") 
@@ -17,11 +19,36 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
             ths.forEach(i => i.style.removeProperty("color"))
             e.target.style.color = "red"
           }
-        ths.forEach(i => {if (i.id !== "player") {
+        ths.forEach(i => {
+            if (i.id !== "player") {
             i.addEventListener("click",(e) => handleClick(i, e))
             return () => i.removeEventListener("click",(e) => handleClick(i, e))
           }})
         },[])
+        
+    useEffect(() => {
+      const handleChange = () => {
+        if (window.innerWidth < 769 && showTable === true) {
+          tableRef.current.style.setProperty("right", "0%")
+        } else if (window.innerWidth > 769 && showTable === true) {
+          tableRef.current.style.setProperty("right", "51%")
+          tableRef.current.style.setProperty("top", "28.7%")
+        } else {
+          tableRef.current.style.setProperty("right", "100%");
+        }}
+      query.addEventListener("change", handleChange)
+      return () => query.removeEventListener("change", handleChange)
+    },[query])
+
+    useEffect(() => {
+      const onClick = () => {
+        tableRef.current.style.setProperty("right", "100%")
+        setShowTable(false)
+      }
+      const closeButton = document.getElementsByClassName("close-button")[0]
+      closeButton.addEventListener("click", onClick)
+      return () => closeButton.removeEventListener("click", onClick)
+    },[])
 
     const onClick = async (playerId) => {
       if (roster.map(i => i.id).includes(playerId)) {
@@ -60,15 +87,20 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
           return parseInt(b.avg.min.split(':')[0] * 60 + b.avg.min.split(':')[1]) - parseInt(a.avg.min.split(':')[0] * 60 + a.avg.min.split(':')[1]) ;
       }
     })
-    console.log(position);
+
     return (
-        <div className="position-absolute border pt-3"style={{ zIndex:3,right:position, top:140, width: "45vw", height:380, transitionDuration:".5s", backgroundColor:"#eff0f2"}}>
+        <div ref={tableRef} className="table-container position-absolute border pt-3"style={{ zIndex:3, top:"28.7%", height:"58vh", transitionDuration:".5s", backgroundColor:"#eff0f2"}}>
             <style type="text/css">
-              {`  
+              {`
+               .table-container {
+                width: 46.5vw;
+                right: 100%;
+              } 
+
               .Statistics-Table {
                 overflow: scroll;
                 position: relative;
-                height: 54vh;
+                height: 48vh;
                 width: 100%;
                 z-index: 1;
                 background-color: white;
@@ -120,11 +152,19 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                input::placeholder {
                 font-size: 12px;
                }
+
+               @media only screen and (max-width: 768px) {
+               .table-container {
+                width:1000px;
+                top: 18% !important;
+               }
+
+               }
              `}    
             </style>
             <div className='d-flex align-items-center justify-content-between'>
               <input className="border pb-1 px-1" style={{marginBottom:"0.5rem", outlineColor:"#456990"}} onChange={handleChange} type="text" placeholder='Search player'/>
-              <CloseButton onClick={() => setPosition(position === 570? 1280: 1000)} className='mb-2' aria-label='Close'></CloseButton>
+              <CloseButton className='close-button mb-2' aria-label='Close'></CloseButton>
             </div> 
             <div className='Statistics-Table'>
               <Table size="sm" bordered hover>
@@ -160,8 +200,7 @@ const TableComponent = ({activePlayers, sort, setSort, handleChange, playerFilte
                 </tbody>
               </Table>
             </div>
-        </div>
-    )
+        </div>)
 }
 
 export default TableComponent;

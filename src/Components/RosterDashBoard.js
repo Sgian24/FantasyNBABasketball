@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import Button from 'react-bootstrap/Button';
 import { useEffect, useRef } from 'react';
 
-const RosterDashboard = ({roster, deleteRoster, setPlayerID, position, setPosition}) => {
+const RosterDashboard = ({getRef, roster, deleteRoster, setPlayerID, showTable, setShowTable}) => {
   
   const statButton = useRef([]);
   const buttonRef = statButton.current;
@@ -30,6 +30,23 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID, position, setPositi
       return () => waiveButtonRef.forEach(i => i?.removeEventListener("click", () => deleteRoster(Number(i.name))))
       }
     },[roster])
+
+  useEffect(() => {
+    const onClick = () => {
+      setShowTable(!showTable? true: false)
+      if (!showTable && window.innerWidth > 769) {
+          getRef.current.style.setProperty("right", "51%")
+      } else if (showTable && window.innerWidth > 769) {
+        getRef.current.style.setProperty("right", "100%") 
+      } else if (!showTable && window.innerWidth < 769) {
+        getRef.current.style.setProperty("right", "0%")
+      } else if (showTable && window.innerWidth < 769) {
+        getRef.current.style.setProperty("right", "100%")
+      }}
+     const button = document.getElementsByClassName("draft-button")[0]
+     button.addEventListener("click", onClick)
+     return () => button.removeEventListener("click", onClick)  
+    },[showTable]) 
 
   return (
         <div className='px-0'>
@@ -80,7 +97,6 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID, position, setPositi
                 font-size: 8px !important;
               }
             }
-
              .dashboard:hover {
                 background-color: #00000013;
              }
@@ -88,8 +104,8 @@ const RosterDashboard = ({roster, deleteRoster, setPlayerID, position, setPositi
         </style>
        <div className='d-flex p-0 mb-2 gap-3'>
         <h5 className="p-0 pt-2 " style={{lineHeight:"0.2"}}>Roster</h5>
-        <Button onClick={() => setPosition(position === 1280? 660: 1280)} size="sm"  variant="outline-primary" style={{height: "4vh", minWidth:"4vw", fontSize:"0.65rem"}}>DRAFT</Button>
-       </div> 
+        <Button className="draft-button" size="sm"  variant="outline-primary" style={{height: "4vh", minWidth:"4vw", fontSize:"0.65rem"}}>DRAFT</Button>
+       </div>
         <Container className='d-flex align-items-center bg-white p-0 rounded border' style={{height:"17vh", overflowY:"hidden"}} fluid >
          <Row className="d-flex flex-nowrap gx-0 p-0 w-100 rounded">
           <p className='text-center opacity-50' style={{display: roster.length === 0? "block": "none"}}>Click draft to start adding players to your roster.</p>

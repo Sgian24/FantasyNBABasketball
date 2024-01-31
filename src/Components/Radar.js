@@ -55,7 +55,7 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
              <g transform={`translate(${props.x},${props.y})`}>
                 <text alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={12}>{props.id}</text>
              </g>
-             <g transform={`translate(${props.id === "Points"? 8.021436534415163e-15
+             <g transform={`translate(${props.id === "Points"? 8.021436534415163e-15 
                                         : props.id === "Assists"? 124.58840363466511 + 5
                                         : props.id === "Rebounds"? 76.99986805031398 + 10
                                         : props.id === "Blocks"? -76.99986805031398 - 7
@@ -67,7 +67,7 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
                                         : props.id === "Blocks"? 105.98122626311812 + 21
                                         : -40.481226263118096 + 21
                                         })`}>   
-                <text alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={20} fill={"#028090"} >
+                <text alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={18} fill={"#028090"} >
                     {
                     props.id === "Points" & playerID !== ""? player?.avg.pts
                     : props.id === "Assists"  & playerID !== ""? player?.avg.ast

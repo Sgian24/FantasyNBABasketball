@@ -64,16 +64,39 @@ const Chart = ({activePlayers, roster, chartType, setChartType}) => {
  
   return (
     <>
+      <style>
+        {`
+          @media only screen and (max-width: 992px) {
+           .stat-buttons {
+            font-size: 0.7em !important;
+           }
+           }
+           @media only screen and (max-width: 768px) {
+            .stat-buttons {
+             min-width: 10vw !important;
+            }
+            .chart-container {
+            height: 55vh !important;
+            margin-bottom: 3vh;
+            }
+          }
+            @media only screen and (max-width: 576px) {
+              .stat-buttons {
+               min-width: 11vw !important;
+            }
+          }
+        `}
+      </style>
       <h5>Roster Statistics</h5>
       <div className='bg-white h-100 rounded border'>
-          <div style={{height: "50vh"}}>
+          <div className="chart-container" style={{height: "50vh"}}>
             <div style={{paddingTop: "3vh"}} className="d-flex justify-content-center">
              <ButtonGroup>
-              <Button style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} active ref={element => statButton.current[0] = element} variant="outline-secondary" >Points</Button>
-              <Button style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[1] = element} variant="outline-secondary" >Rebounds</Button>
-              <Button style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[2] = element} variant="outline-secondary" >Assists</Button>
-              <Button style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[3] = element} variant="outline-secondary" >Blocks</Button>
-              <Button style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)"}} ref={element => statButton.current[4] = element} variant="outline-secondary" >Steals</Button>
+              <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} active ref={element => statButton.current[0] = element} variant="outline-secondary" >Points</Button>
+              <Button className="stat-buttons" style={{minWidth: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[1] = element} variant="outline-secondary" >Rebounds</Button>
+              <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[2] = element} variant="outline-secondary" >Assists</Button>
+              <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[3] = element} variant="outline-secondary" >Blocks</Button>
+              <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)"}} ref={element => statButton.current[4] = element} variant="outline-secondary" >Steals</Button>
              </ButtonGroup> 
             </div>
             <ResponsiveBar

@@ -157,6 +157,10 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
                .table-container {
                 width:1000px;
                 top: 18% !important;
+                height: 56vh !important;
+               }
+               .Statistics-Table {
+                height: 45vh !important;
                }
                #player {
                 min-width: 200px !important;

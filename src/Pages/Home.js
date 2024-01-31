@@ -8,10 +8,11 @@ import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import {MemoChart} from '../Components/Chart';
 import Radar from '../Components/Radar';
 import NavBar from '../Components/NavigationBar';
+import { ListGroup } from 'react-bootstrap';
 
 const Home = () => {
 
@@ -40,7 +41,7 @@ const Home = () => {
     method: 'GET',
 	  headers: {
 		'X-RapidAPI-Key': `${process.env.REACT_APP_RAPID_API_KEY}`,
-		'X-RapidAPI-Host': "nba-player-individual-stats.p.rapidapi.com"
+		'X-RapidAPI-Host': "tank01-fantasy-stats.p.rapidapi.com"
 	  }
   };
   
@@ -56,55 +57,35 @@ const Home = () => {
     const playerIDs = [];
     const getData = async () => {
      try { 
-       const response = await Promise.all(
+      const response = await Promise.all(
          pages.map( async i => {
            return await axios.get(`https://www.balldontlie.io/api/v1/players?page=${i}&per_page=100`, {signal: abortController.signal})
-          }))    
-       
-       const activeResponse = await axios.get('https://nba-player-individual-stats.p.rapidapi.com/players', options) 
-      
+          }))           
+       const activeResponse = await axios.get('https://tank01-fantasy-stats.p.rapidapi.com/getNBATeams?schedules=true&rosters=true', options) 
        response.map(i => i.data.data.map(t => totalPlayers.push(t)))
-
-       /* NBA free agents that switched teams had incomplete data*/
-       const freeAgents = ["Fred", "Dillon", "Donte", "Bruce", "Gabe", "Dennis", "Eric", "Lonnie", "OG"]
-       const freeAgentHeadShots = [{Name:"Fred",
-                            headShot: "https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/2991230.png"},
-                           {Name:"Dillon",
-                            headShot: "https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3155526.png"}, 
-                           {Name:"Donte",
-                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3934673.png"}, 
-                           {Name:"Bruce",
-                            headshot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4065670.png"}, 
-                           {Name:"Gabe",
-                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3137259.png"}, 
-                           {Name:"Dennis",
-                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3032979.png"},  
-                           {Name:"Eric",
-                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3431.png"}, 
-                           {Name:"Lonnie",
-                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4277890.png"},
-                            {Name:"OG",
-                            headShot:"https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3934719.png"} 
-                           ]
-
-       const activePlayersFiltered = totalPlayers.filter(i => activeResponse.data
-        .filter(i => i.team !== null || freeAgents.includes(i.firstName))
-        .map(i => i.firstName + i.lastName)
-        .includes(i.first_name + i.last_name) && i.id !== 448)
-        
-        // Gary Trent Jr is included a second time with a different id(448) hence the filter 
+       const obbject = activeResponse.data.body.map(i => i.Roster)  
+       //const keys = []
+       const objectArray = []
+       //obbject.map(i => Object.keys(i)).forEach(i => i.map(t => keys.push(t)))
+       obbject.map(i => Object.entries(i)).forEach((i) => objectArray.push(i));
+       const names = objectArray.map(i => i.map(t => t[1].longName));
+       const nameArray = []
+      names.map(i => i.map(t => nameArray.push(t)));
+      const headShotArray2 = []
+      const headShotArray = objectArray.map(i => i.map(t => t[1])).map(e => e.map(t => headShotArray2.push(t)))
+       const activePlayersFiltered = totalPlayers.filter(i => nameArray
+      .includes(i.first_name + " " + i.last_name))
        activePlayersFiltered.map(i => playerIDs.push(i.id))
        const slicedArray_1 = playerIDs.slice(0, 200)
        const slicedArray_2 = playerIDs.slice(200, 600)
        const playerIDs_1 = slicedArray_1.map(i => `&player_ids[]=${i}`).join("") 
        const playerIDs_2 = slicedArray_2.map(i => `&player_ids[]=${i}`).join("") 
-       const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022${playerIDs_1}`, {signal: abortController.signal})
-       const seasonResponse_2 = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2022${playerIDs_2}`, {signal: abortController.signal})
+       const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2023${playerIDs_1}`, {signal: abortController.signal})
+       const seasonResponse_2 = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2023${playerIDs_2}`, {signal: abortController.signal})
        const seasonResponseFull = seasonResponse.data.data.concat(seasonResponse_2.data.data)
-       console.log(seasonResponseFull)
+       console.log("SRF", seasonResponseFull)
        activePlayersFiltered.forEach(i => {i.avg = seasonResponseFull.filter(t => i.id === t.player_id)[0];
-        i.headShot = freeAgents.includes(i.first_name)? freeAgentHeadShots.filter(t => t.Name === i.first_name)[0]?.headShot: 
-        activeResponse.data.filter(t => (i.first_name + i.last_name).includes(t.firstName + t.lastName))[0].headShotUrl
+       i.headShot = headShotArray2.filter(t => (i.first_name + " " + i.last_name) === t.longName)[0].nbaComHeadshot
       })
        setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
      } catch (error) {
@@ -177,7 +158,7 @@ const Home = () => {
   } 
   
   return (
-       <div className='d-flex flex-column justify-content-center ' >
+       <div className='main-container d-flex flex-column justify-content-center' >
        <style>
         {`
          @media only screen and (max-width: 768px) {
@@ -189,6 +170,9 @@ const Home = () => {
           }
           .row-container {
             row-gap: 7vh;
+          }
+          .main-container {
+            height: 168vh;
           }
         }
         `}

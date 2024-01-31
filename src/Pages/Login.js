@@ -1,6 +1,6 @@
 import { useState, useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ErrorMessage, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import NBA from "../Assets/nba-graphic-cropped.png";
 import Wave from "../Assets/waveline.svg";
@@ -16,7 +16,7 @@ import Image from "react-bootstrap/Image";
 const Login = () => {
 
     const [error, setError] = useState("");
-    const {logIn} = useUserAuth();
+    const {logIn, user} = useUserAuth();
     const navigate = useNavigate();
 
     const onLogIn = async ( em, p) => {
@@ -84,7 +84,7 @@ useEffect(() => {
                 <Col md="5" className="bg-white d-flex flex-column align-items-center justify-content-center">
                     <h2 className="text-center mb-4">Sign In</h2>
                     { error? <Alert className="d-flex align-items-center" style={{width: 350}} onClose={() => setError("")} variant="danger" dismissible> 
-                                Incorrect username or password.   
+                                Incorrect email or password.   
                              </Alert>: <></>
                     }
                     <Form className="w-100 d-flex flex-column align-items-center">
@@ -104,7 +104,7 @@ useEffect(() => {
                                 Sign In
                         </Button>
                         <div className="text-center">
-                            <p>Don't have an account? <Link style={{textDecoration: "none"}}to="/signup">Sign up</Link></p>
+                            <p>Don't have an account? <Link style={{textDecoration: "none"}}to="/signup">Create an account</Link></p>
                         </div>
                     </Form>
                 </Col>

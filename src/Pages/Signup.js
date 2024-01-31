@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ErrorMessage, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useUserAuth } from "../UserAuthContext";
 import { firestore} from "../firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, collection, getDocs } from "firebase/firestore";
 import NBA from "../Assets/nba-graphic-cropped.png";
 import Wave from "../Assets/waveline.svg";
 import Alert from "react-bootstrap/Alert";
@@ -18,29 +18,42 @@ import Image from "react-bootstrap/Image";
 const Signup = () => {
 
     const [error, setError] = useState("");
+    const [userNames, setUserNames] = useState([])
     const { signUp, logOut } = useUserAuth();
     const navigate = useNavigate();
+
+   useEffect(() => {
+        const fetchUserNames = async () => {
+            const collect = await getDocs(collection(firestore, "users"))
+            const userNameList = []
+            collect.forEach(i => userNameList.push(i.data().user))
+            setUserNames(userNameList)
+        }
+        fetchUserNames();
+    },[])
     
     const onSignUp = async (em, pass) => {
-        
-        setError("");
-        try {
-          const userCredentials = await signUp(em, pass);
-          const user = userCredentials.user
-          navigate("/");
-          await setDoc(doc(firestore, "users", user.uid), {
-            user: formik.values.user,
-            userID: user.uid,
-            userEmail: user.email,
-            roster: []
-          });
-          await logOut()
+          setError("")
+          if (!userNames.includes(formik.values.user)) {  
+          try {
+                const userCredentials = await signUp(em, pass);
+                const user = userCredentials.user
+                navigate("/");
+                await setDoc(doc(firestore, "users", user.uid), {
+                    user: formik.values.user,
+                    userID: user.uid,
+                    userEmail: user.email,
+                    roster: []
+                });
+                await logOut()
         } catch (err) {
           setError(err.message);
           console.log(error);
+        }} else {
+            setError("Username already in use")
         }
     }
-
+    console.log(userNames);
     const formik = useFormik({
       initialValues: {
           user: "",
@@ -87,7 +100,8 @@ const Signup = () => {
               <Col md="5" className="bg-white d-flex flex-column align-items-center justify-content-center">
                   <h2 className="text-center mb-4">Create an account</h2>
                   { error? <Alert className="d-flex align-items-center" style={{width: 350}} onClose={() => setError("")} variant="danger" dismissible> 
-                            {error === "Firebase: Error (auth/email-already-in-use)."? "Email already in use.": "Invalid email."}   
+                            {error === "Firebase: Error (auth/email-already-in-use)."? "Email already in use."
+                            : error === "Username already in use"? "Username already in use.":"Invalid email."}   
                            </Alert>: <></>
                     }
                   <Form className="w-100 d-flex flex-column align-items-center">

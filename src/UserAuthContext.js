@@ -13,7 +13,7 @@ export function UserAuthContextProvider({children}) {
     }
 
     const signUp = (email, password) => {
-        return createUserWithEmailAndPassword(auth, email, password)
+        return createUserWithEmailAndPassword(auth, email, password);
     }
 
     const logOut = () => {
@@ -25,7 +25,7 @@ export function UserAuthContextProvider({children}) {
             console.log("Auth", user);
             setUser(user)
         })
-        return unsubscribe();
+        return () => unsubscribe();
     },[]);
 
     return (

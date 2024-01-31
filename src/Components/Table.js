@@ -158,8 +158,15 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
                 width:1000px;
                 top: 18% !important;
                }
-
+               #player {
+                min-width: 200px !important;
                }
+               }
+               @media only screen and (max-width: 1200px) {
+               #player {
+                min-width: 200px !important;
+              }
+              }
              `}    
             </style>
             <div className='d-flex align-items-center justify-content-between'>
@@ -185,7 +192,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
                 </thead>
                 <tbody id="Statistics-Table-Body" >
                    {playerSort.map(i =><tr key={i.id}>
-                    <td><Button className="me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)}>DRAFT</Button>{i.first_name} {i.last_name} </td>
+                    <td><Button className="me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)} style={{height: "4vh",minWidth: "4vw", fontSize:"0.6rem"}}>DRAFT</Button>{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
                     <td >{i.avg.min}</td>
                     <td >{i.avg.pts.toFixed(1)}</td>

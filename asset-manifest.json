@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/FantasyNBABasketball/static/css/main.104dd6dd.css",
-    "main.js": "/FantasyNBABasketball/static/js/main.f439e86a.js",
+    "main.js": "/FantasyNBABasketball/static/js/main.ffb273af.js",
     "static/media/nba-graphic-cropped.png": "/FantasyNBABasketball/static/media/nba-graphic-cropped.6e0250c62f83e2aab51f.png",
     "static/media/waveline.svg": "/FantasyNBABasketball/static/media/waveline.6689fe95ea6c88ea46036753bd0b51e6.svg",
     "index.html": "/FantasyNBABasketball/index.html",
     "static/media/info-circle.svg": "/FantasyNBABasketball/static/media/info-circle.a2fcd65b232af7b0fb0e57b6d90c77d1.svg",
     "static/media/info-circle-fill.svg": "/FantasyNBABasketball/static/media/info-circle-fill.f69004860928f8308569ee8a7a05b635.svg",
     "main.104dd6dd.css.map": "/FantasyNBABasketball/static/css/main.104dd6dd.css.map",
-    "main.f439e86a.js.map": "/FantasyNBABasketball/static/js/main.f439e86a.js.map"
+    "main.ffb273af.js.map": "/FantasyNBABasketball/static/js/main.ffb273af.js.map"
   },
   "entrypoints": [
     "static/css/main.104dd6dd.css",
-    "static/js/main.f439e86a.js"
+    "static/js/main.ffb273af.js"
   ]
 }

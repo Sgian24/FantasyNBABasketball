@@ -12,7 +12,6 @@ import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import {MemoChart} from '../Components/Chart';
 import Radar from '../Components/Radar';
 import NavBar from '../Components/NavigationBar';
-import { ListGroup } from 'react-bootstrap';
 
 const Home = () => {
 
@@ -30,6 +29,7 @@ const Home = () => {
   const [showTable, setShowTable] = useState(false)
   const [userName, setUserName] = useState("");
   const [show, setShow] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   const navigate = useNavigate();
 
@@ -158,7 +158,7 @@ const Home = () => {
   } 
   
   return (
-       <div className='main-container d-flex flex-column justify-content-center' >
+       <div className='main-container d-flex flex-column justify-content-center align-items-center' >
        <style>
         {`
          @media only screen and (max-width: 768px) {
@@ -177,17 +177,17 @@ const Home = () => {
         }
         `}
         </style> 
-        <Container className="" fluid>
+        <Container className="" style={{height: "9vh"}} fluid>
           <Row className='mb-3 border bg-white' style={{height:"8vh", width:"100vw"}}>
             <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut} userName={userName} show={show} setShow={setShow}/>
       </Row>
       </Container>
        <Container className='page-container position-relative' style={{backgroundColor:"#f8f8f8", height: "100vh", overflow:"hidden", width: "95%"}} fluid>
           <Row className="" style={{marginBottom: "1vh", overflow:"hidden", }}>
-            <TableComponent tableRef={tableRef} showTable={showTable} setShowTable={setShowTable} position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
+            <TableComponent tableRef={tableRef} showTable={showTable} setShowTable={setShowTable} showAlert={showAlert} setShowAlert={setShowAlert} position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
             <RosterDashboard getRef={tableRef} showTable={showTable} setShowTable={setShowTable} roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
           </Row>
-           <Row className="row-container" style={{height: "58vh"}}>
+           <Row className="row-container" style={{height: "56vh"}}>
             <Col md={6} className="radar-container ps-0"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md={6} className='bar-container pe-0' ><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col>
           </Row>
       </Container>

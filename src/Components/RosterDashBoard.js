@@ -60,24 +60,22 @@ const RosterDashboard = ({getRef, roster, deleteRoster, setPlayerID, showTable, 
                 height: 8vh !important;
               }
               .Stats-button {
-                min-width: 6vw !important;
+                min-width: 6vw ;
                 font-size: 10px !important;
               }
               .Waive-button {
-                min-width: 6vw !important;
+                min-width: 6vw ;
                 font-size: 10px !important;
               }
            }
 
              @media only screen and (max-width: 768px) {
               .roster-row {
-                width: 33.3% !important;
+                width: 33.3% !important ;
               }
               .headshot-column {
-                padding-left: 0px !important;
-              }
-              .player-names {
-                width: 7vw !important;
+                padding-left: 3vw !important ;
+                width: 14vw !important;
               }
              }
             
@@ -86,19 +84,41 @@ const RosterDashboard = ({getRef, roster, deleteRoster, setPlayerID, showTable, 
                 width: 50% !important;
               }
               .player-names {
-                width: 10vw !important;
+                width: 15vw !important;
+              }
+              .headshot-column {
+                padding-left: 4vw !important ;
+                width: 21vw !important;
               }
               .Waive-button {
-                min-width: 5vw !important;
-                font-size: 8px !important;
+                min-width: 17vw !important ;
+                font-size: 8px ;
               }
               .Stats-button {
-                min-width: 5vw !important;
-                font-size: 8px !important;
+                min-width: 17vw !important ;
+                font-size: 8px ;
               }
             }
              .dashboard:hover {
                 background-color: #00000013;
+             }
+            
+             @media only screen and (max-width: 376px) {
+               .player-names {
+                font-size: 0.6em !important;
+               }
+               .headshot-column {
+                padding-left: 1vw !important ;
+                width: 21vw !important;
+              }
+              .Waive-button {
+                min-width: 20vw !important ;
+                font-size: 8px ;
+              }
+              .Stats-button {
+                min-width: 20vw !important ;
+                font-size: 8px ;
+              }
              }
             `}
         </style>
@@ -106,24 +126,30 @@ const RosterDashboard = ({getRef, roster, deleteRoster, setPlayerID, showTable, 
         <h5 className="p-0 pt-2 " style={{lineHeight:"0.2"}}>Roster</h5>
         <Button className="draft-button" size="sm"  variant="outline-primary" style={{height: "4vh", minWidth:"4vw", fontSize:"0.65rem"}}>DRAFT</Button>
        </div>
-        <Container className='d-flex align-items-center bg-white p-0 rounded border' style={{height:"17vh", overflowY:"hidden"}} fluid >
-         <Row className="d-flex flex-nowrap gx-0 p-0 w-100 rounded">
-          <p className='text-center opacity-50' style={{display: roster.length === 0? "block": "none"}}>Click draft to start adding players to your roster.</p>
+        <Container className='d-flex align-items-center bg-white p-0 rounded ' style={{height:"22vh", overflowY:"hidden"}} fluid >
+         <Row className="d-flex flex-nowrap gx-0 p-0 w-100 h-100 rounded">
+          <p className='text-center opacity-50 mt-5' style={{display: roster.length === 0? "block": "none"}}>Click draft to start adding players to your roster.</p>
          {roster.map((i, index) => 
-         <Row className="roster-row w-25 gx-0">
-          <Col lang="en"key={i.id} className='dashboard d-flex align-items-center justify-content-center px-2 border' style={{height:"17vh",width:"22.26vw"}}>
-              <Col sm={3} md={3} lg={3} className='d-flex flex-column gap-2 w-25'>
-              <Button size="sm" variant="outline-secondary" ref={element => statButton.current[index] = element} style={{fontSize: "2vh", fontWeight:"bold", minWidth: "4vw"}} className='Stats-button' name={i.id}>VIEW</Button>
-              <Button size="sm" variant="outline-danger" ref={element => waiveButton.current[index] = element} style={{fontSize: "2vh",  fontWeight:"bold", minWidth: "4vw"}} className="Waive-button" name={i.id} >WAIVE</Button>
-            </Col>
-            <Col sm={4} md={5} lg={5} className="headshot-column ps-3">
+         <Row className="roster-row w-25 gx-0" style={{height:"100%"}}>
+          
+          <Row lang="en"key={i.id} className='dashboard d-flex align-items-center justify-content-center px-2 border gx-0 gap-0' style={{height:"100%",width:"100%"}}>
+            <Row className=" d-flex align-items-end px-0 gap-1">
+            <Col sm={6} lg={6} className="headshot-column ps-3 mt-1" style={{width:"50%"}}>
               <Image id="headshot" src={i.headShot} style={{height: "10vh", }} />
             </Col>
-            <Col className="player-names" sm={5} md={4} lg={4} style={{width: "5vw", fontSize:"0.8em", fontWeight:"bold", overflowWrap: "break-word", hyphens:"manual"}}>
+            <Col sm={6} lg={6}className="player-names px-0"   style={{width: "10vw", fontSize:"0.8em", fontWeight:"bold", overflowWrap: "break-word", hyphens:"manual", }}>
               {i.first_name} <br></br>
              {i.last_name.length > 7? i.last_name.slice(0,7): i.last_name}&shy;{i.last_name.length > 7? i.last_name.slice(7):""}
             </Col>
-          </Col>
+            </Row>
+            <Row className='w-100 px-0'>
+            <Col className='d-flex flex-row justify-content-center gap-1 w-100 mb-2'>
+              <Button size="sm" variant="outline-secondary" ref={element => statButton.current[index] = element} style={{fontSize: "2vh", fontWeight:"bold", minWidth: "10vw"}} className='Stats-button' name={i.id}>VIEW</Button>
+              <Button size="sm" variant="outline-danger" ref={element => waiveButton.current[index] = element} style={{fontSize: "2vh",  fontWeight:"bold", minWidth: "10vw"}} className="Waive-button" name={i.id} >WAIVE</Button>
+            </Col>
+            </Row>
+          </Row>
+          
           </Row>
           )}
           </Row>    

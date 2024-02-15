@@ -5,8 +5,9 @@ import { firestore } from '../firebase';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import CloseButton from 'react-bootstrap/CloseButton';
+import Alert from 'react-bootstrap/Alert';
 
-const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster, showTable, setShowTable}) => {
+const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, playerFilter, roster, setRoster, showTable, setShowTable, showAlert, setShowAlert}) => {
 
     const {user} = useUserAuth();
 
@@ -32,7 +33,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
           tableRef.current.style.setProperty("right", "0%")
         } else if (window.innerWidth > 769 && showTable === true) {
           tableRef.current.style.setProperty("right", "51%")
-          tableRef.current.style.setProperty("top", "28.7%")
+          tableRef.current.style.setProperty("top", "33.7%")
         } else {
           tableRef.current.style.setProperty("right", "100%");
         }}
@@ -52,7 +53,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
 
     const onClick = async (playerId) => {
       if (roster.map(i => i.id).includes(playerId)) {
-        window.alert("included");
+        setShowAlert(true);
       } else {
       const updatedRoster = roster.concat(activePlayers.filter(i => i.id === playerId))
       const rosterRef = doc(firestore, "users", user.uid)
@@ -89,7 +90,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
     })
 
     return (
-        <div ref={tableRef} className="table-container position-absolute border pt-3"style={{ zIndex:3, top:"28.7%", height:"58vh", transitionDuration:".5s", backgroundColor:"#eff0f2"}}>
+        <div ref={tableRef} className="table-container position-absolute border pt-3"style={{ zIndex:3, top:"33.7%", height:"56vh", transitionDuration:".5s", backgroundColor:"#eff0f2",}}>
             <style type="text/css">
               {`
                .table-container {
@@ -100,7 +101,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
               .Statistics-Table {
                 overflow: scroll;
                 position: relative;
-                height: 48vh;
+                height: 46vh;
                 width: 100%;
                 z-index: 1;
                 background-color: white;
@@ -156,7 +157,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
                @media only screen and (max-width: 768px) {
                .table-container {
                 width:1000px;
-                top: 18% !important;
+                top: 21% !important;
                 height: 56vh !important;
                }
                .Statistics-Table {
@@ -173,11 +174,15 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
               }
              `}    
             </style>
+            {showAlert? <Alert className="position-absolute" style={{zIndex:4, left:"25%", top:"30%"}} variant="danger" onClose={() => setShowAlert(false)} dismissible>This player is already on the roster</Alert>:<></>}
+            <div className='opacity-50 position-absolute z-3' style={{display:showAlert? "block": "none", top:"0%", left:"0%", width:"100%", height:"100%", backgroundColor:"grey"}}></div>
             <div className='d-flex align-items-center justify-content-between'>
               <input className="border pb-1 px-1" style={{marginBottom:"0.5rem", outlineColor:"#456990"}} onChange={handleChange} type="text" placeholder='Search player'/>
               <CloseButton className='close-button mb-2' aria-label='Close'></CloseButton>
             </div> 
+            
             <div className='Statistics-Table'>
+           
               <Table size="sm" bordered hover>
                 <thead>
                   <tr>

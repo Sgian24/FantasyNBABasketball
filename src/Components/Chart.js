@@ -63,37 +63,47 @@ const Chart = ({activePlayers, roster, chartType, setChartType}) => {
   },[])
  
   return (
-    <>
+    <div className="h-100">
       <style>
         {`
           @media only screen and (max-width: 992px) {
            .stat-buttons {
             font-size: 0.7em !important;
            }
-           }
+          }
            @media only screen and (max-width: 768px) {
             .stat-buttons {
-             min-width: 10vw !important;
+             min-width: 10vw ;
             }
             .chart-container {
             height: 55vh !important;
             margin-bottom: 3vh;
             }
           }
-            @media only screen and (max-width: 576px) {
+            
+          @media only screen and (max-width: 576px) {
               .stat-buttons {
-               min-width: 11vw !important;
+               min-width: 15vw ;
             }
           }
+
+          @media only screen and (max-width: 376px) {
+            .stat-buttons {
+             min-width: 5vw !important;
+          }
+            .button-group {
+             width: 90vw; 
+            }  
+        }
         `}
       </style>
       <h5>Roster Statistics</h5>
-      <div className='bg-white h-100 rounded border'>
-          <div className="chart-container" style={{height: "50vh"}}>
+      <div className='bg-white h-100 rounded border '>
+          <div className="chart-container" style={{height: "49vh"}}>
             <div style={{paddingTop: "3vh"}} className="d-flex justify-content-center">
-             <ButtonGroup>
+             <ButtonGroup className="button-group">
               <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} active ref={element => statButton.current[0] = element} variant="outline-secondary" >Points</Button>
-              <Button className="stat-buttons" style={{minWidth: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[1] = element} variant="outline-secondary" >Rebounds</Button>
+              <Button className="stat-buttons" style={{width: "9vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[1] = element} variant="outline-secondary" >Rebounds</Button>
               <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[2] = element} variant="outline-secondary" >Assists</Button>
               <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)", borderRight:"0px"}} ref={element => statButton.current[3] = element} variant="outline-secondary" >Blocks</Button>
               <Button className="stat-buttons" style={{width: "7vw", fontSize: "0.9em", border:"solid 1px rgba(69, 105, 144, 0.5)"}} ref={element => statButton.current[4] = element} variant="outline-secondary" >Steals</Button>
@@ -144,7 +154,7 @@ const Chart = ({activePlayers, roster, chartType, setChartType}) => {
           />
         </div>
       </div>
-  </>
+  </div>
       )
   }
   

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../UserAuthContext';
 import { firestore } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useEffect, useState, useRef, useLayoutEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {MemoChart} from '../Components/Chart';
 import Radar from '../Components/Radar';
 import NavBar from '../Components/NavigationBar';
@@ -44,50 +44,44 @@ const Home = () => {
 		'X-RapidAPI-Host': "tank01-fantasy-stats.p.rapidapi.com"
 	  }
   };
+
+  const options2 = {
+	  headers: {
+		'Authorization': `${process.env.REACT_APP_BALLDONTLIE_API_KEY}`
+	  }
+  };
   
   useEffect(() => {
-    const abortController = new AbortController();
-    const arrayRange = (start, stop, step) =>
-      Array.from(
-        { length: (stop - start) / step + 1 },
-        (value, index) => start + index * step
-    );
-    const pages = arrayRange(4,52,1)
-    const totalPlayers = [];
-    const playerIDs = [];
+    const pages = [0,100,200,300,400,666400,666809,3547272,4196965,17895693,17895984,17896113,38017722,56677582]
     const getData = async () => {
      try { 
       const response = await Promise.all(
-         pages.map( async i => {
-           return await axios.get(`https://www.balldontlie.io/api/v1/players?page=${i}&per_page=100`, {signal: abortController.signal})
-          }))           
+        pages.map(async i => {
+          return await axios.get(`https://api.balldontlie.io/v1/players?&per_page=100&cursor=${i}`, options2)
+        }))
        const activeResponse = await axios.get('https://tank01-fantasy-stats.p.rapidapi.com/getNBATeams?schedules=true&rosters=true', options) 
-       response.map(i => i.data.data.map(t => totalPlayers.push(t)))
-       const obbject = activeResponse.data.body.map(i => i.Roster)  
-       //const keys = []
+       const totalPlayers = []
        const objectArray = []
-       //obbject.map(i => Object.keys(i)).forEach(i => i.map(t => keys.push(t)))
-       obbject.map(i => Object.entries(i)).forEach((i) => objectArray.push(i));
-       const names = objectArray.map(i => i.map(t => t[1].longName));
+       const playerIDs = []
        const nameArray = []
-      names.map(i => i.map(t => nameArray.push(t)));
-      const headShotArray2 = []
-      const headShotArray = objectArray.map(i => i.map(t => t[1])).map(e => e.map(t => headShotArray2.push(t)))
+       const headShotArray = []
+       response.map(i => i.data.data.map(t => totalPlayers.push(t)))
+       const playerObject = activeResponse.data.body.map(i => i.Roster)   
+       playerObject.map(i => Object.entries(i)).forEach((i) => objectArray.push(i));
+       const names = objectArray.map(i => i.map(t => t[1].longName)); 
+       names.map(i => i.map(t => nameArray.push(t)));
+       objectArray.map(i => i.map(t => t[1])).map(e => e.map(t => headShotArray.push(t)))
        const activePlayersFiltered = totalPlayers.filter(i => nameArray
-      .includes(i.first_name + " " + i.last_name))
+        .includes(i.first_name + " " + i.last_name))
        activePlayersFiltered.map(i => playerIDs.push(i.id))
-       const slicedArray_1 = playerIDs.slice(0, 200)
-       const slicedArray_2 = playerIDs.slice(200, 600)
-       const playerIDs_1 = slicedArray_1.map(i => `&player_ids[]=${i}`).join("") 
-       const playerIDs_2 = slicedArray_2.map(i => `&player_ids[]=${i}`).join("") 
-       const seasonResponse = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2023${playerIDs_1}`, {signal: abortController.signal})
-       const seasonResponse_2 = await axios.get(`https://www.balldontlie.io/api/v1/season_averages?season=2023${playerIDs_2}`, {signal: abortController.signal})
-       const seasonResponseFull = seasonResponse.data.data.concat(seasonResponse_2.data.data)
-       console.log("SRF", seasonResponseFull)
-       activePlayersFiltered.forEach(i => {i.avg = seasonResponseFull.filter(t => i.id === t.player_id)[0];
-       i.headShot = headShotArray2.filter(t => (i.first_name + " " + i.last_name) === t.longName)[0].nbaComHeadshot
+       const playerIdParams = playerIDs.map(i => `&player_ids[]=${i}`).join("")
+
+       const seasonResponse = await axios.get(`https://api.balldontlie.io/v1/season_averages?season=2023${playerIdParams}`, options2)
+       
+       activePlayersFiltered.forEach(i => {i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)[0];
+       i.headShot = headShotArray.filter(t => (i.first_name + " " + i.last_name) === t.longName)[0].nbaComHeadshot
       })
-       setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
+      setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
      } catch (error) {
        if (error.response) {
          console.log(error.response.data);
@@ -101,31 +95,45 @@ const Home = () => {
      }
    }
    getData();
-   return () => abortController.abort();
   },[])
- 
+  
   useEffect(() => {
-    if (localStorage.length === 0 || localStorage.players === "null" || !localStorage.players)
-    localStorage.setItem("players", JSON.stringify(local))
+    if (local && localStorage.length === 0 || local && localStorage.players === "null" || local && !localStorage.players) {
+    const now = new Date();
+    const data = {
+      value: local,
+      expiry: now.getTime() + 86400000
+    }
+    localStorage.setItem("players", JSON.stringify(data))
+    } 
   }, [local] )
+    
+  useEffect(() => {  
+   const localPlayers = JSON.parse(localStorage.getItem("players"))
+   const now = new Date()
+   if (localPlayers){
+    if (now.getTime() > localPlayers.expiry) {
+       localStorage.removeItem("players") 
+      } else {
+      setActivePlayers(localPlayers.value?.filter(i => i.avg.games_played > 9))
+   }}
+  }, [local, localStorage]);
 
   useEffect(() => {
-   const localPlayers = JSON.parse(localStorage.getItem("players"))
-   if (localPlayers) {
-      setActivePlayers(localPlayers.filter(i => i.avg.games_played > 9))
-   }
-  }, [local]);
- 
-  useEffect(() => {
     const fetchRoster = async () => {
-      if (user.uid) {
+      if (user.uid && activePlayers.length > 0 ) {
         const docRef = doc(firestore, "users", user.uid)
         const docSnap = await getDoc(docRef)
-        setRoster(docSnap.data().roster)
+        const rosterIDs = [].concat(docSnap.data().roster.map(i => i?.id))
+        const updatedRoster = activePlayers.filter(i => rosterIDs.includes(i?.id))
+        await updateDoc(docRef, {
+          roster: updatedRoster
+        })
         setUserName(docSnap.data().user)
+        setRoster(updatedRoster)
     }}
     fetchRoster()
-  },[user])
+ },[user, activePlayers])
 
   useEffect(() => {
     playerIDRef.current = playerID

@@ -70,6 +70,8 @@ useEffect(() => {
                 }
                 .form-container {
                     width: 80vw !important;
+                    background-color: white;
+                    box-shadow: 0 1rem 3rem rgba(0,0,0, .15);
                 }
                 #signInButton {
                     width: 80% !important;
@@ -105,13 +107,13 @@ useEffect(() => {
                 <Col style={{backgroundImage:`url(${Wave})`, backgroundPosition: "50% 30%"}} md="7" className="image-container d-flex justify-content-center align-items-center bg-image">
                     <Image id="nba-collage"style={{height: "60vh"}} src={NBA} alt="Collage of NBA players." fluid />
                     <div style={{width: 150, marginLeft: 25}}>
-                        <h1 className=" text-white">Track your Fantasy Basketball Roster</h1>
-                        <p className="text-white">Sign in to compare your roster to other players across the NBA.</p>
+                        <h1 className="text-white">Visualize your Fantasy Basketball Roster</h1>
+                        <p className="text-white">Sign in to visualize your NBA fantasy roster and player statistics.</p>
                     </div>
                 </Col>
                 <Col md="5" className="col-container bg-white d-flex flex-column align-items-center justify-content-center gap-4">
-                    <h2>Fantasy Basketball Visualizer</h2>
-                    <div className="form-container shadow bg-white rounded d-flex flex-column align-items-center" style={{width: "40vw"}} >    
+                    <h2 className="d-lg-none d-md-none">Fantasy Basketball Visualizer</h2>
+                    <div className="form-container rounded d-flex flex-column align-items-center" style={{width: "40vw"}} >    
                     <h2 className="text-center mb-4 mt-3 ">Sign In</h2>
                     { error? <Alert className="form-error d-flex align-items-center" style={{width: 350}} onClose={() => setError("")} variant="danger" dismissible> 
                                 Incorrect email or password.   

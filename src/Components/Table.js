@@ -12,6 +12,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
     const {user} = useUserAuth();
 
     const query = window.matchMedia("(max-width: 768px)")
+    const queryTwo = window.matchMedia("(max-width: 1400px)")
     
     useEffect(() => {
         const ths = document.querySelectorAll("th") 
@@ -30,16 +31,23 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
     useEffect(() => {
       const handleChange = () => {
         if (window.innerWidth < 769 && showTable === true) {
-          tableRef.current.style.setProperty("right", "0%")
-        } else if (window.innerWidth > 769 && showTable === true) {
+          tableRef.current.style.setProperty("right", "0%") 
+        } else if (window.innerWidth > 1400 && showTable === true) {
+          tableRef.current.style.setProperty("right", "50.5%")
+          tableRef.current.style.setProperty("bottom", "0%")
+        } else if (window.innerWidth > 769 && window.innerWidth < 1400 && showTable === true) {
           tableRef.current.style.setProperty("right", "51%")
-          tableRef.current.style.setProperty("top", "33.7%")
+          tableRef.current.style.setProperty("bottom", "0%")
         } else {
           tableRef.current.style.setProperty("right", "100%");
         }}
       query.addEventListener("change", handleChange)
-      return () => query.removeEventListener("change", handleChange)
-    },[query])
+      queryTwo.addEventListener("change", handleChange)
+      return () =>  {
+        query.removeEventListener("change", handleChange)
+        queryTwo.removeEventListener("change", handleChange)
+      }
+    },[query, queryTwo])
 
     useEffect(() => {
       const onClick = () => {
@@ -90,99 +98,14 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
     })
 
     return (
-        <div ref={tableRef} className="table-container position-absolute border pt-3"style={{ zIndex:3, top:"33.7%", height:"56vh", transitionDuration:".5s", backgroundColor:"#eff0f2",}}>
-            <style type="text/css">
-              {`
-               .table-container {
-                width: 46.5vw;
-                right: 100%;
-              } 
-
-              .Statistics-Table {
-                overflow: scroll;
-                position: relative;
-                height: 46vh;
-                width: 100%;
-                z-index: 1;
-                background-color: white;
-              }
-              
-              Table {
-               border-collapse: separate;
-               border-spacing: 0;
-              }
-              
-               .Statistics-Table th {
-                border-bottom: solid 1px #dee2e6;
-                position: sticky;
-                background: white;
-                top: 0;
-                cursor: pointer;
-                z-index: 2;
-               }
-              
-              #player {
-                border-bottom: 1px solid #dee2e6;
-                position: sticky;
-                background: white;
-                left: 0;
-                cursor: auto;
-                z-index: 3;
-              }
-              
-              tr {
-               font-size: 14px;
-              }
-
-              td {
-               font-size: 12px; 
-              }
-
-               tbody tr td:nth-child(1) {
-                min-width: 17vw;
-                position: sticky;
-                left: 0;
-                background: white;
-                border-bottom: solid 1px #dee2e6;
-               }
-
-               .Statistics-Table tbody tr td {
-                border-bottom: solid 1px #dee2e6;
-               }
-
-               input::placeholder {
-                font-size: 12px;
-               }
-
-               @media only screen and (max-width: 768px) {
-               .table-container {
-                width:1000px;
-                top: 21% !important;
-                height: 56vh !important;
-               }
-               .Statistics-Table {
-                height: 45vh !important;
-               }
-               #player {
-                min-width: 200px !important;
-               }
-               }
-               @media only screen and (max-width: 1200px) {
-               #player {
-                min-width: 200px !important;
-              }
-              }
-             `}    
-            </style>
-            {showAlert? <Alert className="position-absolute" style={{zIndex:4, left:"25%", top:"30%"}} variant="danger" onClose={() => setShowAlert(false)} dismissible>This player is already on the roster</Alert>:<></>}
-            <div className='opacity-50 position-absolute z-3' style={{display:showAlert? "block": "none", top:"0%", left:"0%", width:"100%", height:"100%", backgroundColor:"grey"}}></div>
+        <div ref={tableRef} className="table-container position-absolute border ps-2 pe-2 pt-3">
+            {showAlert? <Alert className="table-alert position-absolute" variant="danger" onClose={() => setShowAlert(false)} dismissible>This player is already on the roster</Alert>:<></>}
+            <div className='opacity-div opacity-50 position-absolute z-3 w-100 h-100' style={{display:showAlert? "block": "none"}}></div>
             <div className='d-flex align-items-center justify-content-between'>
-              <input className="border pb-1 px-1" style={{marginBottom:"0.5rem", outlineColor:"#456990"}} onChange={handleChange} type="text" placeholder='Search player'/>
+              <input className="table-search border pb-1 px-1" onChange={handleChange} type="text" placeholder='Search player'/>
               <CloseButton className='close-button mb-2' aria-label='Close'></CloseButton>
             </div> 
-            
-            <div className='Statistics-Table'>
-           
+            <div className='statistics-table bg-white position-relative overflow-scroll w-100 '>
               <Table size="sm" bordered hover>
                 <thead>
                   <tr>
@@ -201,7 +124,7 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
                 </thead>
                 <tbody id="Statistics-Table-Body" >
                    {playerSort.map(i =><tr key={i.id}>
-                    <td><Button className="me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)} style={{height: "4vh",minWidth: "4vw", fontSize:"0.6rem"}}>DRAFT</Button>{i.first_name} {i.last_name} </td>
+                    <td><Button className="draft-button me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)}>DRAFT</Button>{i.first_name} {i.last_name} </td>
                     <td>{i.avg.games_played}</td>
                     <td >{i.avg.min}</td>
                     <td >{i.avg.pts.toFixed(1)}</td>

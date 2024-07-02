@@ -16,11 +16,11 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
         first_name: "N/A",
         last_name: "",
         avg: {
-            ast: 0,
-            pts: 0,
-            blk: 0,
-            stl: 0,
-            reb: 0
+            ast: 0.00,
+            pts: 0.00,
+            blk: 0.00,
+            stl: 0.00,
+            reb: 0.00
         }
     }
     const radarPlayer = roster.concat(defaultStats).filter(i => i.id === Number(playerID))
@@ -54,26 +54,24 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
             <>
              <g transform={`translate(${props.x},${props.y})`}>
                 <text alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={12}>{props.id}</text>
-             </g>
-             <g transform={`translate(${props.id === "Points"? 8.021436534415163e-15 
-                                        : props.id === "Assists"? 124.58840363466511 + 5
-                                        : props.id === "Rebounds"? 76.99986805031398 + 10
-                                        : props.id === "Blocks"? -76.99986805031398 - 7
-                                        : -124.58840363466513 - 6
+                <text transform={`translate(${props.id === "Points"? 0
+                                        : props.id === "Assists"? 0
+                                        : props.id === "Rebounds"? 0
+                                        : props.id === "Blocks"? 0
+                                        : 0
                                         },
-                                        ${props.id === "Points"? -131 + 21
-                                        : props.id === "Assists"? -40.48122626311811 + 21
-                                        : props.id === "Rebounds"? 105.98122626311812 + 21
-                                        : props.id === "Blocks"? 105.98122626311812 + 21
-                                        : -40.481226263118096 + 21
-                                        })`}>   
-                <text alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={18} fill={"#028090"} >
+                                        ${props.id === "Points"? 21
+                                        : props.id === "Assists"? 21
+                                        : props.id === "Rebounds"? 21
+                                        : props.id === "Blocks"? 21
+                                        : 21
+                                        })`} alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={18} fill={"#028090"} >
                     {
-                    props.id === "Points" & playerID !== ""? player?.avg.pts
-                    : props.id === "Assists"  & playerID !== ""? player?.avg.ast
-                    : props.id === "Rebounds" & playerID !== ""? player?.avg.reb
-                    : props.id === "Blocks" & playerID !== ""? player?.avg.blk
-                    : props.id === "Steals" & playerID !== ""? player?.avg.stl   
+                    props.id === "Points" & playerID !== ""? player?.avg.pts.toPrecision(3)
+                    : props.id === "Assists"  & playerID !== ""? player?.avg.ast.toPrecision(3)
+                    : props.id === "Rebounds" & playerID !== ""? player?.avg.reb.toPrecision(3)
+                    : props.id === "Blocks" & playerID !== ""? player?.avg.blk.toPrecision(3)
+                    : props.id === "Steals" & playerID !== ""? player?.avg.stl.toPrecision(3)   
                     : ""                                 
                     }</text>
              </g>
@@ -85,9 +83,9 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
       }
     return (
      <>
-       <h5>Radar</h5>
-       <div className='bg-white h-100 rounded border'> 
-        <div style={{height: "50vh"}}>
+       <h5 className="mb-2">Radar</h5>
+       <div className='bg-white rounded border' style={{height:"58vh"}}> 
+        <div className="radar-div mb-3">
          <ResponsiveRadar
             data={radarData}
             keys={[radarNames]}

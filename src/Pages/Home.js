@@ -12,6 +12,7 @@ import { useEffect, useState, useRef } from 'react';
 import {MemoChart} from '../Components/Chart';
 import Radar from '../Components/Radar';
 import NavBar from '../Components/NavigationBar';
+import Spinner from 'react-bootstrap/Spinner';
 
 const Home = () => {
 
@@ -30,6 +31,7 @@ const Home = () => {
   const [userName, setUserName] = useState("");
   const [show, setShow] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate();
 
@@ -124,13 +126,14 @@ const Home = () => {
       if (user.uid && activePlayers.length > 0 ) {
         const docRef = doc(firestore, "users", user.uid)
         const docSnap = await getDoc(docRef)
-        const rosterIDs = [].concat(docSnap.data().roster.map(i => i?.id))
+        const rosterIDs = [].concat(docSnap.data().roster?.map(i => i?.id))
         const updatedRoster = activePlayers.filter(i => rosterIDs.includes(i?.id))
         await updateDoc(docRef, {
           roster: updatedRoster
         })
         setUserName(docSnap.data().user)
         setRoster(updatedRoster)
+        setLoading(false)
     }}
     fetchRoster()
  },[user, activePlayers])
@@ -166,37 +169,27 @@ const Home = () => {
   } 
   
   return (
-       <div className='main-container d-flex flex-column justify-content-center align-items-center' >
-       <style>
-        {`
-         @media only screen and (max-width: 768px) {
-          .radar-container, .bar-container {
-            padding: 0px;
-          }
-          .page-container {
-            height: 160vh !important;
-          }
-          .row-container {
-            row-gap: 7vh;
-          }
-          .main-container {
-            height: 168vh;
-          }
-        }
-        `}
-        </style> 
-        <Container className="" style={{height: "9vh"}} fluid>
-          <Row className='mb-3 border bg-white' style={{height:"8vh", width:"100vw"}}>
+       <div className='main-container position-relative h-auto w-100 d-flex flex-column justify-content-center align-items-center' >
+        <Container className="nav-container" fluid>
+          <Row className='nav-container-row mb-3 border bg-white'>
             <NavBar position={position} setPosition={setPosition} onLogOut={onLogOut} userName={userName} show={show} setShow={setShow}/>
-      </Row>
-      </Container>
-       <Container className='page-container position-relative' style={{backgroundColor:"#f8f8f8", height: "100vh", overflow:"hidden", width: "95%"}} fluid>
-          <Row className="" style={{marginBottom: "1vh", overflow:"hidden", }}>
-            <TableComponent tableRef={tableRef} showTable={showTable} setShowTable={setShowTable} showAlert={showAlert} setShowAlert={setShowAlert} position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
+          </Row>
+        </Container>
+        <div className="loading-spinner d-flex justify-content-center align-items-center position-absolute w-100 bg-black" style={{visibility:loading? "visible":"hidden"}}>
+          <Spinner animation='border' variant='light'/>
+        </div>
+       <Container className='page-container h-auto overflow-hidden' fluid>
+          <Row className="page-container-row overflow-hidden">
             <RosterDashboard getRef={tableRef} showTable={showTable} setShowTable={setShowTable} roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
           </Row>
-           <Row className="row-container" style={{height: "56vh"}}>
-            <Col md={6} className="radar-container ps-0"><Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/></Col><Col md={6} className='bar-container pe-0' ><MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/></Col>
+          <Row className="row-container position-relative h-auto">
+            <Col md={6} className="radar-container ps-0 ">
+              <TableComponent tableRef={tableRef} showTable={showTable} setShowTable={setShowTable} showAlert={showAlert} setShowAlert={setShowAlert} position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
+              <Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/>
+            </Col>
+            <Col md={6} className='bar-container pe-0 h-auto' >
+              <MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/>
+            </Col>
           </Row>
       </Container>
       </div>

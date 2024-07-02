@@ -11,36 +11,23 @@ const NavBar = ({onLogOut, show, setShow, userName}) => {
     return (
         <div className='px-0'>
         <style type="text/css">
-          {`
-          .info {
-            height: 16px;
-            width: 16px;
-            background-image: url("${InfoCircle}");
-            cursor: pointer;
-          }
-          
+          {`  
           .info:hover {
-            background-image: url("${InfoCircleFill}")
+            background-image: url("${InfoCircleFill}") !important;
           } 
-
-          @media only screen and (max-width: 768px) {
-            .nav-row {
-              padding-right: 1rem;
-            }
-           }
           `}
         </style>
-        <Container className="d-flex justify-content-center px-0" style={{width:"95%"}} fluid>
-           <Row className="nav-row d-flex align-items-center " style={{height: "8vh", marginBottom: "2vh", width:"100%" }}>
-            <Col className='d-flex gap-1 px-0'>
-              <h5 style={{fontWeight:"normal"}}>Welcome,</h5>
-              <h5 style={{color:"#456990"}}>{userName}</h5>
+        <Container className="margin-container d-flex justify-content-center px-0" fluid>
+           <Row className="nav-row w-100 d-flex align-items-center">
+           <Col className='d-flex gap-1 px-0'>
+              <h5>Welcome,</h5>
+              <h5 className='username'>{userName}</h5>
             </Col>
             <Col className="d-flex justify-content-end align-items-center gap-3 px-0 ">
-              <div className="info" onClick={() => setShow(true)}></div>
-              <Button onClick={onLogOut} type="submit" size="sm" style={{minWidth: "6vw", fontSize:"0.9rem"}}variant="primary">Log out</Button>
+              <div className="info" style={{backgroundImage:`url("${InfoCircle}")`}} onClick={() => setShow(true)}></div>
+              <Button className="signout-button" onClick={onLogOut} type="submit" size="sm" variant="primary">Sign out</Button>
             </Col>
-            <Modal show={show} onHide={() => setShow(false)}>
+            <Modal className="mt-5" show={show} onHide={() => setShow(false)}>
               <Modal.Header closeButton>
                 <Modal.Title>About</Modal.Title>  
               </Modal.Header>

@@ -58,7 +58,7 @@ const RosterDashboard = ({getRef, roster, deleteRoster, setPlayerID, showTable, 
        </div>
         <Container className='h-auto overflow-y-hidden d-flex align-items-center bg-white px-0 rounded ' fluid >
          <Row className="d-flex flex-nowrap gx-0 p-0 w-100 h-100 rounded">
-          <p className='text-center opacity-50 mt-5' style={{display: roster.length === 0? "block": "none"}}>Click draft to start adding players to your roster.</p>
+          <p className='text-center opacity-50 mt-5 mb-5' style={{display: roster.length === 0? "block": "none"}}>Click draft to start adding players to your roster.</p>
           {roster.map((i, index) => 
             <Row className="roster-row w-25 gx-0 h-100">
             <Row lang="en"key={i.id} className='h-100 w-100 dashboard d-flex align-items-center justify-content-center px-2 border gx-0 gap-0'>

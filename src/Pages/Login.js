@@ -43,7 +43,7 @@ const formik = useFormik({
 })
 
 useEffect(() => {
-    const button = document.getElementById("signInButton")
+    const button = document.getElementsByClassName("signInButton")[0]
     const testing = () => {
         if (formik.values.email === "" || formik.values.password === "" || !formik.values.email.includes("@")) {
             setError("blank")
@@ -58,91 +58,49 @@ useEffect(() => {
         <>
         <style type="text/css">
             {`
-             #signInButton {
-                background-color: #088395;
-             }
-             #signInButton:hover {
-                background-color: #065e6b;
-             }
-             @media only screen and (max-width: 765px) {
-                .image-container {
-                    display: none !important;
-                }
-                .form-container {
-                    width: 80vw !important;
-                    background-color: white;
-                    box-shadow: 0 1rem 3rem rgba(0,0,0, .15);
-                }
-                #signInButton {
-                    width: 80% !important;
-                }
-                .col-container {
-                    background-color: #eff0f2 !important;
-                }
-                .form-input {
-                    width: 86% !important;
-                }
-             }
-             @media only screen and (max-width: 376px) {
-                .create-account {
-                    font-size: 0.7rem !important;
-                }
-                h2 {
-                    font-size: 1.2rem !important;
-                }
-                #signInButton {
-                    width: 78% !important;
-                }
-                .form-error {
-                    width: 62vw !important;
-                    font-size: 0.7rem;
-                }
-             }
             `}
 
         </style>
         <Container fluid={true} >
-            <Row style={{height:"100vh"}}>
-                 
-                <Col style={{backgroundImage:`url(${Wave})`, backgroundPosition: "50% 30%"}} md="7" className="image-container d-flex justify-content-center align-items-center bg-image">
-                    <Image id="nba-collage"style={{height: "60vh"}} src={NBA} alt="Collage of NBA players." fluid />
-                    <div style={{width: 150, marginLeft: 25}}>
+            <Row className="signInRow">
+                <Col md="7" className="collage-image-container d-flex justify-content-center align-items-center bg-image" style={{backgroundImage:`url(${Wave})`}} >
+                    <Image className="nba-collage" src={NBA} alt="Collage of NBA players." fluid />
+                    <div className="heading-div">
                         <h1 className="text-white">Visualize your Fantasy Basketball Roster</h1>
                         <p className="text-white">Sign in to visualize your NBA fantasy roster and player statistics.</p>
                     </div>
                 </Col>
                 <Col md="5" className="col-container bg-white d-flex flex-column align-items-center justify-content-center gap-4">
                     <h2 className="d-lg-none d-md-none">Fantasy Basketball Visualizer</h2>
-                    <div className="form-container rounded d-flex flex-column align-items-center" style={{width: "40vw"}} >    
-                    <h2 className="text-center mb-4 mt-3 ">Sign In</h2>
-                    { error? <Alert className="form-error d-flex align-items-center" style={{width: 350}} onClose={() => setError("")} variant="danger" dismissible> 
+                    <div className="signin-form-container rounded d-flex flex-column align-items-center">    
+                        <h2 className="text-center mb-4 mt-3 ">Sign In</h2>
+                            { error? <Alert className="form-error d-flex align-items-center" onClose={() => setError("")} variant="danger" dismissible> 
                                 Incorrect email or password.   
                              </Alert>: <></>
-                    }
-                    <Form className="w-100 d-flex flex-column align-items-center">
-                        <Form.Group className="form-input w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicEmail">
-                            <Form.Label column md={2}>Email</Form.Label>
+                            }
+                            <Form className="w-100 d-flex flex-column align-items-center">
+                            <Form.Group className="form-input w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicEmail">
+                            <Form.Label column md={3} lg={2}>Email</Form.Label>
                             <Col md={6}>
                                 <Form.Control onChange={formik.handleChange} name="email" type="email" placeholder="Email" required/>
                             </Col>
-                        </Form.Group>
-                        <Form.Group className="form-input w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicPassword">
-                            <Form.Label column md={2}>Password</Form.Label>
-                            <Col md={6}>
-                                <Form.Control onChange={formik.handleChange} name="password" type="password" placeholder="Password" />
-                            </Col>
-                        </Form.Group>
-                         <Button id="signInButton" className="w-25 mb-4" onClick={formik.handleSubmit} variant="primary" type="submit">
-                                Sign In
-                        </Button>
-                        <div className="text-center" style={{marginBottom:"3vh"}}>
-                            <p className="create-account">Don't have an account? <Link style={{textDecoration: "none"}}to="/signup">Create an account</Link></p>
-                        </div>
-                    </Form>
+                            </Form.Group>
+                            <Form.Group className="form-input w-100 d-flex justify-content-center mb-4" as={Row} controlId="formBasicPassword">
+                                <Form.Label column md={3} lg={2}>Password</Form.Label>
+                                <Col md={6}>
+                                    <Form.Control onChange={formik.handleChange} name="password" type="password" placeholder="Password" />
+                                </Col>
+                            </Form.Group>
+                            <Button className="signInButton w-25 mb-4" onClick={formik.handleSubmit} variant="primary" type="submit">
+                                    Sign In
+                            </Button>
+                            <div className="text-center create-account-container">
+                                <p className="create-account">Don't have an account? <Link className="text-decoration-none" to="/signup">Create an account</Link></p>
+                            </div>
+                            </Form>
                     </div>
-                    <p className="text-right" style={{fontSize:"0.8rem", color:"#b7b9b7"}}>Developed by Sunny Gian.</p>
+                    <p className="footer-text text-right">Developed by Sunny Gian.</p>
                 </Col>
-                
             </Row>
         </Container>
     </>

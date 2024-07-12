@@ -96,6 +96,7 @@ useEffect(() => {
                             </Button>
                             <div className="text-center create-account-container">
                                 <p className="create-account">Don't have an account? <Link className="text-decoration-none" to="/signup">Create an account</Link></p>
+                                <p className="demo">* For demo purposes you can login with; <br /> Email: rxdtxjojfihpphcjbi@nbmbb.com <br/> Password: qwerty12345.</p>
                             </div>
                             </Form>
                     </div>

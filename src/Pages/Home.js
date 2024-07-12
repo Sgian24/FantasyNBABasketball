@@ -101,10 +101,8 @@ const Home = () => {
   
   useEffect(() => {
     if (local && localStorage.length === 0 || local && localStorage.players === "null" || local && !localStorage.players) {
-    const now = new Date();
     const data = {
-      value: local,
-      expiry: now.getTime() + 86400000
+      value: local
     }
     localStorage.setItem("players", JSON.stringify(data))
     } 
@@ -112,13 +110,9 @@ const Home = () => {
     
   useEffect(() => {  
    const localPlayers = JSON.parse(localStorage.getItem("players"))
-   const now = new Date()
    if (localPlayers){
-    if (now.getTime() > localPlayers.expiry) {
-       localStorage.removeItem("players") 
-      } else {
       setActivePlayers(localPlayers.value?.filter(i => i.avg.games_played > 9))
-   }}
+   }
   }, [local, localStorage]);
 
   useEffect(() => {

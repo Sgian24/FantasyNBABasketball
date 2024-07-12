@@ -53,7 +53,7 @@ const RosterDashboard = ({getRef, roster, deleteRoster, setPlayerID, showTable, 
   return (
        <div className='px-0'>
        <div className='d-flex align-items-center p-0 mb-2 gap-3'>
-        <h5 className="p-0 pt-1 ">Roster</h5>
+        <h5 className="p-0 pt-1 ">Roster (2024 NBA Season)</h5>
         <Button className="dashboard-draft-button h-50" size="sm"  variant="outline-primary">DRAFT</Button>
        </div>
         <Container className='h-auto overflow-y-hidden d-flex align-items-center bg-white px-0 rounded ' fluid >

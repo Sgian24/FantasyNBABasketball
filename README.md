@@ -12,6 +12,6 @@ Tools Used:
 * React Router
 * Recharts
 
-
+View the project at https://sgian24.github.io/FantasyNBABasketball/
 
 

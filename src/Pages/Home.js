@@ -170,7 +170,7 @@ const Home = () => {
           </Row>
         </Container>
         <div className="loading-spinner d-flex justify-content-center align-items-center position-absolute w-100 bg-black" style={{visibility:loading? "visible":"hidden"}}>
-          <Spinner animation='border' variant='light'/>
+          <Spinner className="spinner" animation='border' variant='light'/>
         </div>
        <Container className='page-container h-auto overflow-hidden' fluid>
           <Row className="page-container-row overflow-hidden">

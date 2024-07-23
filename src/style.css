@@ -229,6 +229,11 @@ input::placeholder {
     color: #b7b9b7;
  }
 
+ .demo {
+    text-align: initial;
+    opacity: 0.7;
+ }
+
  /**************************************** Home Page**/
 
  .nav-container {
@@ -411,10 +416,16 @@ input::placeholder {
         min-width: 17vw !important ;
         font-size: 8px ;
     }
+    .loading-spinner {
+        margin-bottom: 75vh;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+    }
 }
 
  @media only screen and (max-width: 376px) {
     .create-account {
+        font-size: 0.7rem;
+    }
+    .demo {
         font-size: 0.7rem;
     }
     h2 {
@@ -435,20 +446,19 @@ input::placeholder {
     }
     .player-names {
         font-size: 0.6em !important;
-       }
-       .headshot-column {
+    }
+    .headshot-column {
         padding-left: 1vw !important ;
         width: 21vw !important;
-      }
-      .Waive-button {
+    }
+    .Waive-button {
         min-width: 20vw !important ;
         font-size: 8px ;
-      }
-      .Stats-button {
+    }
+    .Stats-button {
         min-width: 20vw !important ;
         font-size: 8px ;
-      }
-
+    }
  }
 
  

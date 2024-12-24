@@ -1,16 +1,17 @@
 # NBA Fantasy Visualizer
 
-A web app I developed to visualize NBA player stats with graphs. Users can create an account to draft and save their own roster. Data is fetched from 3 different APIs. Responsive on all screen sizes.
+A web app I developed to present NBA player statistics in graphical form. Users can sign in to create and save their own roster. Data 
+is fetched from the "tank01-fantasy-stats" API (RapidAPI)
 
 Tools Used:
 
 * React
-* Various APIs from RapidAPI
 * Axios
 * Firebase Authentication and Firestore
 * Bootstrap
 * React Router
 * Recharts
+* Formik and Yup Form Validation
 
 View the project at https://sgian24.github.io/FantasyNBABasketball/
 

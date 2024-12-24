@@ -18,7 +18,6 @@ const Home = () => {
 
   const {logOut, user} = useUserAuth();
   
-  const [local, setLocal] = useState(null);
   const [activePlayers, setActivePlayers] = useState([]);
   const [sort, setSort] = useState("PPG");
   const [playerFilter, setPlayerFilter] = useState("");
@@ -41,87 +40,42 @@ const Home = () => {
 
   const options = {
     method: 'GET',
+    params: {
+      schedules: 'false',
+      rosters: 'true',
+      statsToGet: 'averages',
+    },
 	  headers: {
 		'X-RapidAPI-Key': `${process.env.REACT_APP_RAPID_API_KEY}`,
 		'X-RapidAPI-Host': "tank01-fantasy-stats.p.rapidapi.com"
 	  }
   };
 
-  const options2 = {
-	  headers: {
-		'Authorization': `${process.env.REACT_APP_BALLDONTLIE_API_KEY}`
-	  }
-  };
   
   useEffect(() => {
-    const pages = [0,100,200,300,400,666400,666809,3547272,4196965,17895693,17895984,17896113,38017722,56677582]
-    const getData = async () => {
-     try { 
-      const response = await Promise.all(
-        pages.map(async i => {
-          return await axios.get(`https://api.balldontlie.io/v1/players?&per_page=100&cursor=${i}`, options2)
-        }))
-       const activeResponse = await axios.get('https://tank01-fantasy-stats.p.rapidapi.com/getNBATeams?schedules=true&rosters=true', options) 
-       const totalPlayers = []
-       const objectArray = []
-       const playerIDs = []
-       const nameArray = []
-       const headShotArray = []
-       response.map(i => i.data.data.map(t => totalPlayers.push(t)))
-       const playerObject = activeResponse.data.body.map(i => i.Roster)   
-       playerObject.map(i => Object.entries(i)).forEach((i) => objectArray.push(i));
-       const names = objectArray.map(i => i.map(t => t[1].longName)); 
-       names.map(i => i.map(t => nameArray.push(t)));
-       objectArray.map(i => i.map(t => t[1])).map(e => e.map(t => headShotArray.push(t)))
-       const activePlayersFiltered = totalPlayers.filter(i => nameArray
-        .includes(i.first_name + " " + i.last_name))
-       activePlayersFiltered.map(i => playerIDs.push(i.id))
-       const playerIdParams = playerIDs.map(i => `&player_ids[]=${i}`).join("")
-
-       const seasonResponse = await axios.get(`https://api.balldontlie.io/v1/season_averages?season=2023${playerIdParams}`, options2)
-       
-       activePlayersFiltered.forEach(i => {i.avg = seasonResponse.data.data.filter(t => i.id === t.player_id)[0];
-       i.headShot = headShotArray.filter(t => (i.first_name + " " + i.last_name) === t.longName)[0].nbaComHeadshot
-      })
-      setLocal(activePlayersFiltered.filter(i => i.avg !== undefined))
-     } catch (error) {
-       if (error.response) {
-         console.log(error.response.data);
-         console.log(error.response.status);
-         console.log(error.response.headers); 
-       } else if (error.request) {
-         console.log(error.request);
-       } else {
-        console.log(error.message);
-       }
-     }
-   }
-   getData();
-  },[])
-  
-  useEffect(() => {
-    if (local && localStorage.length === 0 || local && localStorage.players === "null" || local && !localStorage.players) {
-    const data = {
-      value: local
+    const fetchData = async () => {
+      const players = []
+      try {
+        const response = await axios.get('https://tank01-fantasy-stats.p.rapidapi.com/getNBATeams',options)
+        response.data.body.forEach(i => {
+          for (const [key, value] of Object.entries(i.Roster)) {
+            players.push(value);
+        }})
+        setActivePlayers(players);
+      } catch (error) {
+        if (error) console.log(error);
+      }
     }
-    localStorage.setItem("players", JSON.stringify(data))
-    } 
-  }, [local] )
-    
-  useEffect(() => {  
-   const localPlayers = JSON.parse(localStorage.getItem("players"))
-   if (localPlayers){
-      setActivePlayers(localPlayers.value?.filter(i => i.avg.games_played > 9))
-   }
-  }, [local, localStorage]);
+    fetchData()
+  },[])
 
   useEffect(() => {
     const fetchRoster = async () => {
       if (user.uid && activePlayers.length > 0 ) {
         const docRef = doc(firestore, "users", user.uid)
         const docSnap = await getDoc(docRef)
-        const rosterIDs = [].concat(docSnap.data().roster?.map(i => i?.id))
-        const updatedRoster = activePlayers.filter(i => rosterIDs.includes(i?.id))
+        const rosterIDs = [].concat(docSnap.data().roster?.map(i => i?.playerID))
+        const updatedRoster = activePlayers.filter(i => rosterIDs.includes(i?.playerID))
         await updateDoc(docRef, {
           roster: updatedRoster
         })
@@ -130,14 +84,14 @@ const Home = () => {
         setLoading(false)
     }}
     fetchRoster()
- },[user, activePlayers])
+ },[user.uid, activePlayers])
 
   useEffect(() => {
     playerIDRef.current = playerID
   })
 
   const deleteRoster = async (ID) => {
-    const updatedRoster = roster.filter(i => i.id !== ID)
+    const updatedRoster = roster.filter(i => i.playerID !== ID)
     const rosterRef = doc(firestore, "users", user.uid)
     await updateDoc(rosterRef, {
       roster: updatedRoster
@@ -147,6 +101,7 @@ const Home = () => {
     if (playerIDRef.current === ID) {
       setPlayerID(12345)
     }
+
   }
   
   const handleChange = (event) => {
@@ -161,7 +116,7 @@ const Home = () => {
         console.log(err.message);
       }
   } 
-  
+
   return (
        <div className='main-container position-relative h-auto w-100 d-flex flex-column justify-content-center align-items-center' >
         <Container className="nav-container" fluid>
@@ -176,7 +131,7 @@ const Home = () => {
           <Row className="page-container-row overflow-hidden">
             <RosterDashboard getRef={tableRef} showTable={showTable} setShowTable={setShowTable} roster={roster} playerID={playerID} setPlayerID={setPlayerID} deleteRoster={deleteRoster} position={position} setPosition={setPosition}/>
           </Row>
-          <Row className="row-container position-relative h-auto">
+          <Row className="row-container position-relative h-auto mb-2 ">
             <Col md={6} className="radar-container ps-0 ">
               <TableComponent tableRef={tableRef} showTable={showTable} setShowTable={setShowTable} showAlert={showAlert} setShowAlert={setShowAlert} position={position} setPosition={setPosition} setRoster={setRoster} roster={roster} sort={sort} setSort={setSort} activePlayers={activePlayers} playerFilter={playerFilter} handleChange={handleChange}/>
               <Radar roster={roster} setPlayer={setPlayer} setPlayerID={setPlayerID} playerID={playerID} player={player}/>
@@ -185,6 +140,12 @@ const Home = () => {
               <MemoChart chartType={chartType} setChartType={setChartType} activePlayers={activePlayers} roster={roster}/>
             </Col>
           </Row>
+          <Row>
+            <Col className=' px-0'>
+              <span className="footer-text">Designed and developed by Sunny Gian.</span>
+            </Col>
+          </Row>
+         
       </Container>
       </div>
   )

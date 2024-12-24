@@ -6,17 +6,16 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 const Chart = ({activePlayers, roster, chartType, setChartType}) => {
     
-  const averageStats = parseFloat((activePlayers.map(i => i.avg[chartType])
-    .reduce((accumulator, currentValue) => accumulator + currentValue, 0)/441)
-    .toFixed(1));
+ const averageStats = parseFloat(activePlayers.filter(i => i.stats).map(i => i.stats?.[chartType])
+    .reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue), 0)/activePlayers.length).toFixed(2)
 
   const rosterAverageStats = roster.map(i => ({
         [chartType === "pts"? "PPG"
         : chartType === "reb"? "RPG"
         : chartType === "ast"? "APG"
         : chartType === "blk"? "BPG"
-        : "SPG"]: i.avg[chartType],
-        Player: i.first_name + " " + i.last_name,
+        : "SPG"]: i.stats?.[chartType],
+        Player: i.espnName,
         color: "#028090"
         }))
         

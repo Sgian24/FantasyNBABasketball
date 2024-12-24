@@ -59,11 +59,11 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
       return () => closeButton.removeEventListener("click", onClick)
     },[])
 
-    const onClick = async (playerId) => {
-      if (roster.map(i => i.id).includes(playerId)) {
+    const onClick = async (Id) => {
+      if (roster.map(i => i.playerID).includes(Id)) {
         setShowAlert(true);
       } else {
-      const updatedRoster = roster.concat(activePlayers.filter(i => i.id === playerId))
+      const updatedRoster = roster.concat(activePlayers.filter(i => i.playerID === Id))
       const rosterRef = doc(firestore, "users", user.uid)
       await updateDoc(rosterRef, {
         roster: updatedRoster
@@ -71,32 +71,32 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
       setRoster(updatedRoster)
     }}
        
-    const playerSort = activePlayers.filter(i => String(i.first_name + " " + i.last_name).toLowerCase()
-      .includes(playerFilter.toLowerCase()))
+    const playerSort = activePlayers.filter(i => String(i.bRefName).toLowerCase()
+      .includes(playerFilter.toLowerCase()) && i.stats && i.stats.gamesPlayed >= 10)
       .sort((a, b) => { 
        if (sort === "PPG") {
-          return b.avg.pts - a.avg.pts
+          return b.stats?.pts - a.stats?.pts
        } else if (sort === "RPG") {
-          return b.avg.reb - a.avg.reb
+          return b.stats?.reb - a.stats?.reb
        } else if (sort === "APG") {
-          return b.avg.ast - a.avg.ast
+          return b.stats?.ast - a.stats?.ast
        } else if (sort === "BPG") {
-          return b.avg.blk - a.avg.blk
+          return b.stats?.blk - a.stats?.blk
        } else if (sort === "SPG") {
-          return b.avg.stl - a.avg.stl
+          return b.stats?.stl - a.stats?.stl
        } else if (sort === "FG%") {
-          return parseFloat(b.avg.fg_pct * 100).toFixed(1) - parseFloat(a.avg.fg_pct * 100).toFixed(1)
+          return parseFloat(b.stats?.fgp * 100).toFixed(1) - parseFloat(a.stats?.fgp * 100).toFixed(1)
        } else if (sort === "3P%") {
-          return parseFloat(b.avg.fg3_pct * 100).toFixed(1) - parseFloat(a.avg.fg3_pct * 100).toFixed(1)
+          return parseFloat(b.stats?.tptfgp * 100).toFixed(1) - parseFloat(a.stats?.tptfgp * 100).toFixed(1)
        } else if (sort === "FT%") {
-          return parseFloat(b.avg.ft_pct * 100).toFixed(1) - parseFloat(a.avg.ft_pct * 100).toFixed(1)
+          return parseFloat(b.stats?.ftp * 100).toFixed(1) - parseFloat(a.stats?.ftp * 100).toFixed(1)
        } else if (sort === "GP") {
-          return b.avg.games_played - a.avg.games_played
+          return b.stats?.gamesPlayed - a.stats?.gamesPlayed
        } else {
-          return parseInt(b.avg.min.split(':')[0] * 60 + b.avg.min.split(':')[1]) - parseInt(a.avg.min.split(':')[0] * 60 + a.avg.min.split(':')[1]) ;
+          return (b.stats.mins) - (a.stats.mins) ;
       }
     })
-
+    
     return (
         <div ref={tableRef} className="table-container position-absolute border ps-2 pe-2 pt-3">
             {showAlert? <Alert className="table-alert position-absolute" variant="danger" onClose={() => setShowAlert(false)} dismissible>This player is already on the roster</Alert>:<></>}
@@ -124,17 +124,17 @@ const TableComponent = ({tableRef, activePlayers, sort, setSort, handleChange, p
                 </thead>
                 <tbody id="Statistics-Table-Body" >
                    {playerSort.map(i =><tr key={i.id}>
-                    <td><Button className="draft-button me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.id)}>DRAFT</Button>{i.first_name} {i.last_name} </td>
-                    <td>{i.avg.games_played}</td>
-                    <td >{i.avg.min}</td>
-                    <td >{i.avg.pts.toFixed(1)}</td>
-                    <td >{i.avg.reb.toFixed(1)}</td>
-                    <td>{i.avg.ast.toFixed(1)}</td>
-                    <td>{i.avg.blk.toFixed(1)}</td>
-                    <td>{i.avg.stl.toFixed(1)}</td>
-                    <td>{parseFloat(i.avg.fg_pct * 100).toFixed(1)}%</td>
-                    <td>{parseFloat(i.avg.fg3_pct * 100).toFixed(1)}%</td>
-                    <td>{parseFloat(i.avg.ft_pct * 100).toFixed(1)}%</td>
+                    <td><Button className="draft-button me-1" variant="outline-secondary"size="sm" onClick={() => onClick(i.playerID)}>DRAFT</Button>{i.espnName} </td>
+                    <td>{i.stats?.gamesPlayed}</td>
+                    <td >{i.stats?.mins}</td>
+                    <td >{i.stats?.pts}</td>
+                    <td >{i.stats?.reb}</td>
+                    <td>{i.stats?.ast}</td>
+                    <td>{i.stats?.blk}</td>
+                    <td>{i.stats?.stl}</td>
+                    <td>{parseFloat(i.stats?.fgp).toFixed(1)}%</td>
+                    <td>{parseFloat(i.stats?.tptfgp).toFixed(1)}%</td>
+                    <td>{parseFloat(i.stats?.ftp).toFixed(1)}%</td>
                     </tr>)}
                 </tbody>
               </Table>

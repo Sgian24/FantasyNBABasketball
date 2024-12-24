@@ -12,41 +12,45 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
     },[])
     
     const defaultStats = {
-        id: 12345,
+        playerID: 12345,
         first_name: "N/A",
         last_name: "",
-        avg: {
+        stats: {
             ast: 0.00,
             pts: 0.00,
             blk: 0.00,
             stl: 0.00,
             reb: 0.00
         }
-    }
-    const radarPlayer = roster.concat(defaultStats).filter(i => i.id === Number(playerID))
-
-    const radarNames = playerID === ""? "N/A": radarPlayer.map(i => i.first_name + " " + i.last_name)
+      }
     
+
+    const radarPlayer = roster.concat(defaultStats).filter(i => i.playerID === playerID)
+
+    const radarNames = playerID === ""? "N/A": radarPlayer.map(i => i.espnName)
+    console.log(playerID);
+    console.log(roster);
+
     const radarData = [
         {
           stats: "Points" ,
-          [radarNames]: playerID === ""? 0: player?.avg.pts
+          [radarNames]: playerID === ""? 0: player?.stats.pts
         }, 
         {
           stats: "Assists", 
-          [radarNames]: playerID === ""? 0: player?.avg.ast
+          [radarNames]: playerID === ""? 0: player?.stats.ast
         }, 
         {
           stats: "Rebounds",
-          [radarNames]: playerID === ""? 0: player?.avg.reb
+          [radarNames]: playerID === ""? 0: player?.stats.reb
         }, 
         {
           stats: "Blocks",
-          [radarNames]: playerID === ""? 0: player?.avg.blk
+          [radarNames]: playerID === ""? 0: player?.stats.blk
         }, 
         {
           stats: "Steals",       
-          [radarNames]: playerID === ""? 0: player?.avg.stl
+          [radarNames]: playerID === ""? 0: player?.stats.stl
         }]
 
     const gridLabel = (props) => {
@@ -67,11 +71,11 @@ const Radar = ({roster, playerID, setPlayerID, player, setPlayer}) => {
                                         : 21
                                         })`} alignmentBaseline="middle" textAnchor={props.x < 10 && props.x > 0? "middle": props.x > 10? "start": "end"} fontSize={18} fill={"#028090"} >
                     {
-                    props.id === "Points" & playerID !== ""? player?.avg.pts.toPrecision(3)
-                    : props.id === "Assists"  & playerID !== ""? player?.avg.ast.toPrecision(3)
-                    : props.id === "Rebounds" & playerID !== ""? player?.avg.reb.toPrecision(3)
-                    : props.id === "Blocks" & playerID !== ""? player?.avg.blk.toPrecision(3)
-                    : props.id === "Steals" & playerID !== ""? player?.avg.stl.toPrecision(3)   
+                    props.id === "Points" & playerID !== ""? player?.stats.pts
+                    : props.id === "Assists"  & playerID !== ""? player?.stats.ast
+                    : props.id === "Rebounds" & playerID !== ""? player?.stats.reb
+                    : props.id === "Blocks" & playerID !== ""? player?.stats.blk
+                    : props.id === "Steals" & playerID !== ""? player?.stats.stl 
                     : ""                                 
                     }</text>
              </g>

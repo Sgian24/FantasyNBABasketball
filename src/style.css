@@ -245,7 +245,7 @@ input::placeholder {
  }
 
  .loading-spinner {
-    height: 110%;
+    height: 105%;
     z-index: 4;
     opacity: 0.5;
  }
